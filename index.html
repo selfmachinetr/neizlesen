@@ -310,6 +310,13 @@ nav.scrolled { background: rgba(7,9,14,0.96); backdrop-filter: blur(24px); borde
 .splash-ep-label { font-size: 13px; color: var(--accent); font-weight: 500; margin-top: 6px; }
 .progress-bar-wrap { height: 3px; background: rgba(255,255,255,.07); }
 .progress-bar-fill { height: 100%; background: linear-gradient(to right, var(--accent), #f0a030); transition: width .6s linear; width: 0%; }
+/* Kaynak seçici */
+.source-switcher { display:flex; gap:6px; align-items:center; }
+.src-btn { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.5); font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.5px; padding:5px 11px; border-radius:6px; cursor:none; transition:all .2s; white-space:nowrap; }
+.src-btn:hover { background:rgba(255,255,255,.12); color:var(--text); }
+.src-btn.active { background:var(--accent); color:#07090e; border-color:var(--accent); }
+/* Player loading overlay */
+.player-loading { position:absolute; inset:0; background:rgba(0,0,0,.85); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:5; color:var(--text); }
 .player-controls { background: #080b11; padding: 13px 22px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,.05); gap: 16px; }
 /* Player Sidebar */
 .player-sidebar { background: #0a0d14; border-left: 1px solid rgba(255,255,255,.07); display: flex; flex-direction: column; overflow: hidden; }
@@ -612,6 +619,8 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
   .player-layout { grid-template-columns: 1fr; }
   .player-sidebar { border-left: none; border-top: 1px solid rgba(255,255,255,.07); max-height: 300px; }
   .player-controls { flex-direction: column; align-items: flex-start; gap: 10px; padding: 12px 16px; }
+  .source-switcher { flex-wrap: wrap; }
+  .src-btn { font-size: 10px; padding: 4px 9px; }
   .pc-right { width: 100%; justify-content: space-between; }
   .seasons-section { padding: 20px 16px; }
   .season-tabs-row { gap: 6px; }
@@ -621,10 +630,46 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
   .detail-body { padding: 24px 16px; }
   .info-card { padding: 16px; }
   .similar-sec { padding: 20px 16px; }
-.site-footer { background:var(--surface); border-top:1px solid var(--border); padding:48px; display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr; gap:40px; margin-top:32px; }
-  .site-footer { grid-template-columns: 1fr 1fr; gap: 24px; padding: 32px 16px; }
+  .site-footer { grid-template-columns: 1fr 1fr !important; gap: 24px; padding: 32px 16px; }
+  .footer-bottom { padding: 14px 16px; }
+  .footer-brand { grid-column: 1 / -1; }
+  .contact-info-cards { grid-template-columns: 1fr 1fr; }
+  .cf-row { grid-template-columns: 1fr; }
   .footer { grid-template-columns: 1fr 1fr; gap: 24px; padding: 32px 16px; }
 }
+.site-footer { background:var(--surface); border-top:1px solid var(--border); padding:52px 64px; display:grid; grid-template-columns:2.2fr 1fr 1fr 1fr 1fr; gap:48px; margin-top:32px; }
+.footer-brand { display:flex; flex-direction:column; gap:16px; }
+.footer-logo { font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:3px; color:var(--accent); }
+.footer-logo span { color:var(--text); }
+.footer-desc { font-size:13px; color:var(--muted); line-height:1.75; max-width:260px; }
+.footer-socials { display:flex; gap:10px; }
+.footer-social-btn { width:34px; height:34px; background:var(--card); border:1px solid var(--border); border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--muted); text-decoration:none; font-size:14px; transition:all .2s; }
+.footer-social-btn:hover { background:var(--accent); color:#07090e; border-color:var(--accent); }
+.footer-col { display:flex; flex-direction:column; }
+.footer-col-title { font-size:10px; font-weight:700; letter-spacing:2.5px; color:var(--text); text-transform:uppercase; margin-bottom:18px; }
+.footer-links { list-style:none; display:flex; flex-direction:column; gap:11px; }
+.footer-links a { color:var(--muted); text-decoration:none; font-size:13px; transition:color .15s; }
+.footer-links a:hover { color:var(--accent); }
+.footer-bottom { background:var(--surface); border-top:1px solid var(--border); padding:14px 64px; display:flex; justify-content:space-between; font-size:12px; color:var(--muted); }
+/* İletişim sayfası */
+.contact-wrap { max-width:640px; margin:0 auto; padding:80px 24px; }
+.contact-title { font-family:'Bebas Neue',sans-serif; font-size:42px; letter-spacing:3px; margin-bottom:8px; }
+.contact-sub { color:var(--muted); font-size:15px; margin-bottom:40px; line-height:1.6; }
+.contact-form { display:flex; flex-direction:column; gap:18px; }
+.cf-group { display:flex; flex-direction:column; gap:7px; }
+.cf-label { font-size:12px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+.cf-input, .cf-select, .cf-textarea { background:var(--card); border:1px solid var(--border); color:var(--text); font-family:inherit; font-size:14px; padding:12px 16px; border-radius:10px; outline:none; transition:border-color .2s; width:100%; box-sizing:border-box; }
+.cf-input:focus, .cf-select:focus, .cf-textarea:focus { border-color:var(--accent); }
+.cf-textarea { resize:vertical; min-height:140px; }
+.cf-select { cursor:none; }
+.cf-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.cf-submit { background:var(--accent); color:#07090e; font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:2px; padding:14px 32px; border:none; border-radius:10px; cursor:none; transition:opacity .2s; align-self:flex-start; }
+.cf-submit:hover { opacity:.85; }
+.contact-info-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:40px; }
+.contact-info-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:6px; }
+.cic-icon { font-size:22px; }
+.cic-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
+.cic-val { font-size:14px; color:var(--text); }
 </style>
 </head>
 <body>
@@ -688,6 +733,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 <div class="page" id="page-person"></div>
 <div class="page" id="page-404"></div>
 <div class="page" id="page-dmca"></div>
+<div class="page" id="page-contact"></div>
 
 <!-- MOBILE OVERLAY + MENU -->
 <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
@@ -895,6 +941,7 @@ function navigateInternal(page, opts = {}) {
     case 'calendar': renderCalendarPage(); break;
     case 'person':   if (opts.id) renderPersonPage(opts.id); else render404(); break;
     case 'dmca':     renderDmcaPage(); break;
+    case 'contact':  renderContactPage(); break;
     case '404':      render404(); break;
     default:         render404();
   }
@@ -1096,23 +1143,64 @@ async function renderHomePage() {
     </div>
 
     <footer class="site-footer">
-      <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--accent);margin-bottom:14px">NE <span style="color:#fff">İZLESEN</span></div>
-        <p style="font-size:14px;color:var(--muted);line-height:1.7">En iyi yabancı film ve dizileri yüksek kalitede izleyin.</p>
+      <!-- Marka sütunu -->
+      <div class="footer-brand">
+        <div class="footer-logo">NE <span>İZLESEN</span></div>
+        <p class="footer-desc">En iyi yabancı film ve dizileri yüksek kalitede izleyin. Türkiye'nin en çok aranan içerikleri tek platformda.</p>
+        <div class="footer-socials">
+          <a href="#" class="footer-social-btn" title="Twitter/X">𝕏</a>
+          <a href="#" class="footer-social-btn" title="Instagram">◎</a>
+          <a href="mailto:iletisim@neizlesen.com" class="footer-social-btn" title="E-posta">✉</a>
+        </div>
       </div>
-      ${['Keşfet','Hesap','Destek'].map((t,i) => `<div><h4 style="font-size:11px;font-weight:600;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-bottom:16px">${t}</h4><ul style="list-style:none">${[['Filmler','Diziler','Kategoriler','Yeni Vizyonlar'],['Profil','Listelerim','Geçmiş','Ayarlar'],['Yardım','İletişim','Gizlilik','Şartlar']][i].map(x=>`<li style="margin-bottom:10px"><a href="#" style="color:var(--muted);text-decoration:none;font-size:14px" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">${x}</a></li>`).join('')}</ul></div>`).join('')}
-      <div>
-        <h4 style="font-size:11px;font-weight:600;letter-spacing:2px;color:var(--text);text-transform:uppercase;margin-bottom:16px">Yasal</h4>
-        <ul style="list-style:none">
-          <li style="margin-bottom:10px"><a href="#" onclick="navigate('dmca');return false" style="color:var(--muted);text-decoration:none;font-size:14px" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">DMCA</a></li>
-          <li style="margin-bottom:10px"><a href="#" style="color:var(--muted);text-decoration:none;font-size:14px" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Gizlilik Politikası</a></li>
-          <li style="margin-bottom:10px"><a href="#" style="color:var(--muted);text-decoration:none;font-size:14px" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Kullanım Şartları</a></li>
-          <li style="margin-bottom:10px"><a href="#" style="color:var(--muted);text-decoration:none;font-size:14px" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Çerez Politikası</a></li>
+
+      <!-- Keşfet -->
+      <div class="footer-col">
+        <h4 class="footer-col-title">Keşfet</h4>
+        <ul class="footer-links">
+          <li><a href="#" onclick="navigate('movies');return false">Filmler</a></li>
+          <li><a href="#" onclick="navigate('series');return false">Diziler</a></li>
+          <li><a href="#" onclick="navigate('browse',{type:'movie',title:'KATEGORİLER'});return false">Kategoriler</a></li>
+          <li><a href="#" onclick="navigate('new');return false">Yeni Vizyonlar</a></li>
+        </ul>
+      </div>
+
+      <!-- Hesap -->
+      <div class="footer-col">
+        <h4 class="footer-col-title">Hesap</h4>
+        <ul class="footer-links">
+          <li><a href="#" onclick="navigate('profile');return false">Profil</a></li>
+          <li><a href="#" onclick="navigate('mylist');return false">Listelerim</a></li>
+          <li><a href="#" onclick="navigate('profile');return false">Geçmiş</a></li>
+          <li><a href="#" onclick="openAuth('login');return false">Giriş Yap</a></li>
+        </ul>
+      </div>
+
+      <!-- Destek -->
+      <div class="footer-col">
+        <h4 class="footer-col-title">Destek</h4>
+        <ul class="footer-links">
+          <li><a href="#" onclick="navigate('contact');return false">İletişim</a></li>
+          <li><a href="mailto:destek@neizlesen.com">Yardım</a></li>
+          <li><a href="#" onclick="navigate('dmca');return false">DMCA</a></li>
+          <li><a href="#">Gizlilik</a></li>
+        </ul>
+      </div>
+
+      <!-- Yasal -->
+      <div class="footer-col">
+        <h4 class="footer-col-title">Yasal</h4>
+        <ul class="footer-links">
+          <li><a href="#" onclick="navigate('dmca');return false">DMCA Bildirimi</a></li>
+          <li><a href="#">Gizlilik Politikası</a></li>
+          <li><a href="#">Kullanım Şartları</a></li>
+          <li><a href="#">Çerez Politikası</a></li>
         </ul>
       </div>
     </footer>
-    <div style="background:var(--surface);border-top:1px solid var(--border);padding:16px 48px;display:flex;justify-content:space-between;font-size:12px;color:var(--muted)">
-      <span>© 2025 Ne İzlesen. Tüm hakları saklıdır.</span><span>Türkiye 🇹🇷</span>
+    <div class="footer-bottom">
+      <span>© 2025 Ne İzlesen. Tüm hakları saklıdır.</span>
+      <span>Türkiye 🇹🇷</span>
     </div>
   `;
 
@@ -1520,6 +1608,11 @@ async function renderDetailPage(id, mediaType) {
               <div class="pc-title" id="pcTitle">${esc(title)}</div>
               <div class="pc-meta" id="pcMeta">${year}${runtime ? ' · ' + runtime : ''} · ★ ${rating}</div>
             </div>
+            <div class="pc-center">
+              <div class="source-switcher" id="sourceControls">
+                ${PLAYER_SOURCES.map((s,i) => `<button class="src-btn${i===0?' active':''}" onclick="switchSource(${i})">${s.name}</button>`).join('')}
+              </div>
+            </div>
             <div class="pc-right">
               ${savedSeconds > 0 ? `<span class="pc-progress-text" id="pcProgress">%${Math.round(progressPct)} izlendi</span>` : '<span class="pc-progress-text" id="pcProgress"></span>'}
               <button class="btn-sm" onclick="startPlayer(${id},'${mediaType}',${firstSeason},${firstEp},${savedSeconds})">
@@ -1814,8 +1907,103 @@ window.loadSeason = async function(seriesId, seasonNum, tabEl, seasonMeta) {
 };
 
 // ─────────────────────────────────────────────
-// VIDKING PLAYER
 // ─────────────────────────────────────────────
+// PLAYER SOURCES — fallback zinciri
+// ─────────────────────────────────────────────
+const PLAYER_SOURCES = [
+  { name: 'Kaynak 1', buildUrl: (id, type, s, e, sec) => {
+    const p = new URLSearchParams({ autoPlay: 'true' });
+    if (sec > 10) p.set('progress', String(Math.floor(sec)));
+    if (type === 'tv') { p.set('nextEpisode','true'); p.set('episodeSelector','true'); return `https://www.vidking.net/embed/tv/${id}/${s}/${e}?${p}`; }
+    return `https://www.vidking.net/embed/movie/${id}?${p}`;
+  }},
+  { name: 'Kaynak 2', buildUrl: (id, type, s, e) => {
+    if (type === 'tv') return `https://vidsrc.to/embed/tv/${id}/${s}/${e}`;
+    return `https://vidsrc.to/embed/movie/${id}`;
+  }},
+  { name: 'Kaynak 3', buildUrl: (id, type, s, e) => {
+    if (type === 'tv') return `https://vidsrc.xyz/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
+    return `https://vidsrc.xyz/embed/movie?tmdb=${id}`;
+  }},
+  { name: 'Kaynak 4', buildUrl: (id, type, s, e) => {
+    if (type === 'tv') return `https://embed.su/embed/tv/${id}/${s}/${e}`;
+    return `https://embed.su/embed/movie/${id}`;
+  }},
+];
+let _currentSourceIdx = 0;
+let _currentPlayerArgs = null;
+
+window.startPlayer = function(id, mediaType, season, episode, startSec, sourceIdx = 0) {
+  _currentSourceIdx = sourceIdx;
+  _currentPlayerArgs = { id, mediaType, season, episode, startSec };
+
+  const wrap = document.getElementById('playerWrap');
+  if (!wrap) return;
+
+  const source = PLAYER_SOURCES[sourceIdx];
+  const src = source.buildUrl(id, mediaType, season, episode, startSec);
+
+  // Kaynak seçici butonları güncelle
+  const btns = document.querySelectorAll('.src-btn');
+  btns.forEach((b, i) => b.classList.toggle('active', i === sourceIdx));
+
+  // Loading overlay göster
+  wrap.innerHTML = `
+    <div class="player-loading" id="playerLoading">
+      <div class="spinner" style="width:36px;height:36px;border-width:3px;margin-bottom:16px"></div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;opacity:.7">${source.name} yükleniyor...</div>
+    </div>
+    <iframe
+      id="vidkingPlayer"
+      class="player-iframe"
+      src="${src}"
+      allowfullscreen
+      allow="autoplay; fullscreen; picture-in-picture"
+      referrerpolicy="no-referrer-when-downgrade"
+      onload="document.getElementById('playerLoading')?.remove()"
+    ></iframe>`;
+
+  // Kaynak kontrollerini güncelle
+  _updateSourceControls(mediaType === 'tv');
+
+  // Update controls label
+  const title = currentDetail?.detail?.title || currentDetail?.detail?.name || '';
+  const pcTitle = document.getElementById('pcTitle');
+  if (pcTitle) {
+    pcTitle.textContent = mediaType === 'tv'
+      ? `${title} — S${String(season).padStart(2,'0')} E${String(episode).padStart(2,'0')}`
+      : title;
+  }
+
+  // 12 saniye sonra hâlâ loading varsa uyar
+  setTimeout(() => {
+    if (document.getElementById('playerLoading')) {
+      document.getElementById('playerLoading').innerHTML = `
+        <div style="text-align:center">
+          <div style="font-size:32px;margin-bottom:12px">⚠️</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:8px">${source.name} YÜKLENEMEDI</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px">Başka bir kaynağı deneyin</div>
+          ${sourceIdx + 1 < PLAYER_SOURCES.length
+            ? `<button class="btn-sm" onclick="startPlayer(${id},'${mediaType}',${season},${episode},0,${sourceIdx+1})" style="font-size:13px">Sonraki Kaynağa Geç →</button>`
+            : `<div style="font-size:13px;color:rgba(255,255,255,.4)">Tüm kaynaklar denendi.</div>`}
+        </div>`;
+    }
+  }, 12000);
+};
+
+window.switchSource = function(idx) {
+  if (!_currentPlayerArgs) return;
+  const { id, mediaType, season, episode } = _currentPlayerArgs;
+  startPlayer(id, mediaType, season, episode, 0, idx);
+};
+
+function _updateSourceControls(isTv) {
+  const ctrl = document.getElementById('sourceControls');
+  if (!ctrl) return;
+  ctrl.innerHTML = PLAYER_SOURCES.map((s, i) =>
+    `<button class="src-btn${i === _currentSourceIdx ? ' active' : ''}" onclick="switchSource(${i})">${s.name}</button>`
+  ).join('');
+}// ─────────────────────────────────────────────
 const VIDKING = 'https://www.vidking.net';
 const ACCENT_HEX = 'e8c840';
 
@@ -2337,6 +2525,89 @@ function render404() {
 // ─────────────────────────────────────────────
 // DMCA SAYFASI
 // ─────────────────────────────────────────────
+function renderContactPage() {
+  const el = document.getElementById('page-contact');
+  el.innerHTML = `
+    <div class="contact-wrap">
+      <div class="contact-title">İLETİŞİM</div>
+      <p class="contact-sub">Sorularınız, önerileriniz veya içerik bildirimleri için bize ulaşabilirsiniz. En geç 72 saat içinde yanıt veriyoruz.</p>
+
+      <div class="contact-info-cards">
+        <div class="contact-info-card">
+          <div class="cic-icon">📧</div>
+          <div class="cic-label">Genel İletişim</div>
+          <div class="cic-val">iletisim@neizlesen.com</div>
+        </div>
+        <div class="contact-info-card">
+          <div class="cic-icon">⚖️</div>
+          <div class="cic-label">DMCA / Hukuki</div>
+          <div class="cic-val">dmca@neizlesen.com</div>
+        </div>
+        <div class="contact-info-card">
+          <div class="cic-icon">🛠️</div>
+          <div class="cic-label">Teknik Destek</div>
+          <div class="cic-val">destek@neizlesen.com</div>
+        </div>
+        <div class="contact-info-card">
+          <div class="cic-icon">⏱️</div>
+          <div class="cic-label">Yanıt Süresi</div>
+          <div class="cic-val">Maks. 72 saat</div>
+        </div>
+      </div>
+
+      <div class="contact-form" id="contactForm">
+        <div class="cf-row">
+          <div class="cf-group">
+            <label class="cf-label">Ad Soyad</label>
+            <input class="cf-input" id="cfName" type="text" placeholder="Adınız Soyadınız" autocomplete="name">
+          </div>
+          <div class="cf-group">
+            <label class="cf-label">E-posta</label>
+            <input class="cf-input" id="cfEmail" type="email" placeholder="ornek@email.com" autocomplete="email">
+          </div>
+        </div>
+        <div class="cf-group">
+          <label class="cf-label">Konu</label>
+          <select class="cf-select" id="cfSubject">
+            <option value="">Konu seçin...</option>
+            <option value="genel">Genel Soru</option>
+            <option value="teknik">Teknik Sorun</option>
+            <option value="icerik">İçerik Talebi</option>
+            <option value="dmca">DMCA / Telif Hakkı</option>
+            <option value="oneri">Öneri / Geri Bildirim</option>
+            <option value="diger">Diğer</option>
+          </select>
+        </div>
+        <div class="cf-group">
+          <label class="cf-label">Mesaj</label>
+          <textarea class="cf-textarea" id="cfMessage" placeholder="Mesajınızı buraya yazın..."></textarea>
+        </div>
+        <button class="cf-submit" onclick="submitContactForm()">GÖNDER →</button>
+      </div>
+    </div>`;
+}
+
+window.submitContactForm = function() {
+  const name = document.getElementById('cfName')?.value.trim();
+  const email = document.getElementById('cfEmail')?.value.trim();
+  const subject = document.getElementById('cfSubject')?.value;
+  const message = document.getElementById('cfMessage')?.value.trim();
+
+  if (!name || !email || !subject || !message) {
+    showToast('Lütfen tüm alanları doldurun.', true); return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Geçerli bir e-posta adresi girin.', true); return;
+  }
+
+  // mailto: ile varsayılan e-posta istemcisini aç
+  const body = encodeURIComponent(`Ad Soyad: ${name}\n\n${message}`);
+  const subjectMap = { genel:'Genel Soru', teknik:'Teknik Sorun', icerik:'İçerik Talebi', dmca:'DMCA Bildirimi', oneri:'Öneri', diger:'Diğer' };
+  const subjectText = encodeURIComponent(`[Ne İzlesen] ${subjectMap[subject]||subject}`);
+  window.location.href = `mailto:iletisim@neizlesen.com?subject=${subjectText}&body=${body}`;
+  showToast('E-posta istemciniz açılıyor... 📧');
+};
+
 function renderDmcaPage() {
   const el = document.getElementById('page-dmca');
   const today = new Date().toLocaleDateString('tr-TR', { year:'numeric', month:'long', day:'numeric' });
