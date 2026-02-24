@@ -4,6 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ne İzlesen — Film & Dizi İzle</title>
+
+<!-- SEO -->
+<meta name="description" content="Ne İzlesen — Türkiye'nin en çok aranan yabancı film ve dizileri tek platformda. Squid Game, Wednesday, Breaking Bad ve daha fazlası.">
+<meta name="keywords" content="film izle, dizi izle, yabancı dizi, netflix dizileri, en iyi filmler, ne izlesem">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://neizlesen.com/">
+<meta property="og:title" content="Ne İzlesen — Film & Dizi İzle">
+<meta property="og:description" content="Türkiye'nin en çok aranan yabancı film ve dizileri tek platformda. Squid Game, Wednesday, Breaking Bad ve daha fazlası.">
+<meta property="og:image" content="https://neizlesen.com/og-image.jpg">
+<meta property="og:locale" content="tr_TR">
+<meta property="og:site_name" content="Ne İzlesen">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://neizlesen.com/">
+<meta name="twitter:title" content="Ne İzlesen — Film & Dizi İzle">
+<meta name="twitter:description" content="Türkiye'nin en çok aranan yabancı film ve dizileri tek platformda.">
+<meta name="twitter:image" content="https://neizlesen.com/og-image.jpg">
+
+<!-- Favicon — emoji tabanlı (SVG) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e50914'/><text y='.9em' font-size='75' x='12'>🎬</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23e50914'/><text y='.9em' font-size='75' x='12'>🎬</text></svg>">
+
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <style>
@@ -568,6 +595,8 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
   .detail-body { padding: 24px 16px; }
   .info-card { padding: 16px; }
   .similar-sec { padding: 20px 16px; }
+.site-footer { background:var(--surface); border-top:1px solid var(--border); padding:48px; display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr; gap:40px; margin-top:32px; }
+  .site-footer { grid-template-columns: 1fr 1fr; gap: 24px; padding: 32px 16px; }
   .footer { grid-template-columns: 1fr 1fr; gap: 24px; padding: 32px 16px; }
 }
 </style>
@@ -1040,7 +1069,7 @@ async function renderHomePage() {
       </div>
     </div>
 
-    <footer style="background:var(--surface);border-top:1px solid var(--border);padding:48px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-top:32px">
+    <footer class="site-footer">
       <div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--accent);margin-bottom:14px">NE <span style="color:#fff">İZLESEN</span></div>
         <p style="font-size:14px;color:var(--muted);line-height:1.7">En iyi yabancı film ve dizileri yüksek kalitede izleyin.</p>
@@ -1070,7 +1099,7 @@ async function renderHomePage() {
   loadCuratedSeries('classicSeries', TR_CLASSIC_SERIES);
 
   // TMDB gerçek zamanlı
-  loadSection('weeklyTrending', '/trending/all/week', {}, null);
+  loadSection('weeklyTrending', '/trending/all/week', {}, 'auto');
   loadSection('popularSeriesLive', '/tv/popular', { with_origin_country:'US|GB|KR|JP' }, 'tv');
   loadSection('newRelease', '/movie/now_playing', {}, 'movie');
 }
@@ -1285,10 +1314,17 @@ window.changeTvGenre = async function(el, genreId) {
 async function loadSection(containerId, path, params, mediaType, page=1) {
   const el = document.getElementById(containerId);
   if (!el) return;
-  el.innerHTML = Array(10).fill(`<div class="skeleton" style="width:170px;aspect-ratio:2/3;flex-shrink:0"></div>`).join('');
+  el.innerHTML = Array(10).fill(`<div class="skeleton" style="width:170px;aspect-ratio:2/3;flex-shrink:0;border-radius:12px"></div>`).join('');
   try {
     const d = await api(path, { ...params, page });
-    el.innerHTML = d.results.slice(0,20).map(m => filmCardHtml(m, mediaType)).join('');
+    // 'auto' modunda TMDB'nin media_type alanını kullan (trending/all gibi karma endpoint'ler için)
+    el.innerHTML = d.results
+      .filter(m => m.poster_path)
+      .slice(0, 20)
+      .map(m => {
+        const mt = mediaType === 'auto' ? (m.media_type || (m.title ? 'movie' : 'tv')) : (mediaType || (m.title ? 'movie' : 'tv'));
+        return filmCardHtml(m, mt);
+      }).join('');
   } catch(e) {
     el.innerHTML = '<p style="color:var(--muted);padding:20px;font-size:14px">Yüklenirken hata oluştu.</p>';
   }
@@ -1411,8 +1447,13 @@ async function renderDetailPage(id, mediaType) {
     const inList = watchlist.some(w => w.id === id && w.mediaType === mediaType);
     const typeLabel = mediaType === 'tv' ? 'DİZİ' : 'FİLM';
 
-    // Dinamik sayfa başlığı
+    // Dinamik sayfa başlığı ve OG etiketleri
     document.title = `${title} — Ne İzlesen`;
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${title} — Ne İzlesen`);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', detail.overview?.slice(0,150) || '');
+    if (detail.poster_path) document.querySelector('meta[property="og:image"]')?.setAttribute('content', IMG_W + detail.poster_path);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', `${title} — Ne İzlesen`);
+    document.querySelector('meta[name="description"]')?.setAttribute('content', detail.overview?.slice(0,150) || '');
 
     // Seasons — only for TV
     const seasons = mediaType === 'tv'
@@ -1686,7 +1727,7 @@ const VIDKING = 'https://www.vidking.net';
 const ACCENT_HEX = 'e8c840';
 
 window.startPlayer = function(id, mediaType, season, episode, startSec) {
-  if (!currentUser) { showToast('İzlemek için giriş yapmalısın!', true); openAuth('login'); return; }
+
 
   const wrap = document.getElementById('playerWrap');
   if (!wrap) return;
@@ -1727,7 +1768,7 @@ window.startPlayer = function(id, mediaType, season, episode, startSec) {
 };
 
 window.playEpisode = function(seriesId, season, episode, name) {
-  if (!currentUser) { showToast('İzlemek için giriş yapmalısın!', true); openAuth('login'); return; }
+
 
   // Update splash label & controls
   const splashLabel = document.getElementById('splashEpLabel');
@@ -1749,7 +1790,7 @@ window.playEpisode = function(seriesId, season, episode, name) {
 };
 
 window.playContent = function(id, mediaType) {
-  if (!currentUser) { showToast('İzlemek için giriş yapmalısın!', true); openAuth('login'); return; }
+
   const progressKey = `cm_progress_${mediaType}_${id}`;
   const saved = JSON.parse(localStorage.getItem(progressKey) || 'null');
   const startSec = saved?.timestamp || 0;
@@ -1928,10 +1969,16 @@ window.sfFilter = async function(type, btn, query) {
       results = d.results.map(r => ({ ...r, media_type: type }));
     }
     const filtered = results.filter(r => r.poster_path || r.backdrop_path);
-    if (sub) sub.textContent = `${filtered.length} sonuç bulundu`;
+    if (sub) sub.textContent = filtered.length ? `${filtered.length} sonuç bulundu` : 'Sonuç bulunamadı';
     grid.innerHTML = filtered.length
       ? filtered.map(m => filmCardHtml(m, m.media_type === 'tv' ? 'tv' : 'movie')).join('')
-      : '<p style="color:var(--muted);padding:40px;grid-column:1/-1;text-align:center">Sonuç bulunamadı.</p>';
+      : `<div style="grid-column:1/-1;text-align:center;padding:80px 20px">
+           <div style="font-size:48px;margin-bottom:16px">🎬</div>
+           <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:12px">"${esc(query)}" İÇİN SONUÇ BULUNAMADI</div>
+           <p style="color:var(--muted);font-size:14px;margin-bottom:24px">Farklı bir arama terimi deneyin veya kategorilere göz atın.</p>
+           <button class="btn-sm" onclick="navigate('movies')">Filmlere Göz At</button>
+           <button class="btn-sm" onclick="navigate('series')" style="margin-left:10px">Dizilere Göz At</button>
+         </div>`;
   } catch(e) { grid.innerHTML = '<p style="color:var(--muted);padding:40px;grid-column:1/-1">Hata oluştu.</p>'; }
 };
 
