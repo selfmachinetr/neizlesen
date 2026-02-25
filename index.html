@@ -310,7 +310,27 @@ nav.scrolled { background: rgba(7,9,14,0.96); backdrop-filter: blur(24px); borde
 .splash-ep-label { font-size: 13px; color: var(--accent); font-weight: 500; margin-top: 6px; }
 .progress-bar-wrap { height: 3px; background: rgba(255,255,255,.07); }
 .progress-bar-fill { height: 100%; background: linear-gradient(to right, var(--accent), #f0a030); transition: width .6s linear; width: 0%; }
-/* Kaynak seçici */
+/* Resume overlay */
+.resume-overlay { position:absolute; bottom:70px; right:16px; z-index:10; animation: fadeInUp .3s ease; }
+.resume-box { background:rgba(7,9,14,.95); border:1px solid rgba(232,200,64,.3); border-radius:14px; padding:18px 22px; display:flex; flex-direction:column; align-items:center; gap:8px; min-width:220px; backdrop-filter:blur(12px); }
+.resume-icon { font-size:24px; }
+.resume-title { font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1.5px; color:var(--text); }
+.resume-time { font-size:22px; font-weight:700; color:var(--accent); font-family:'Bebas Neue',sans-serif; letter-spacing:2px; }
+.resume-hint { font-size:11px; color:var(--muted); text-align:center; }
+.resume-btns { display:flex; flex-direction:column; gap:8px; width:100%; margin-top:4px; }
+.resume-btn { width:100%; text-align:center; font-size:13px; padding:9px; }
+.resume-btn-skip { background:none; border:1px solid var(--border); color:var(--muted); font-size:12px; padding:7px; border-radius:8px; cursor:none; transition:all .2s; }
+.resume-btn-skip:hover { color:var(--text); border-color:var(--text); }
+@keyframes fadeInUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+/* Kaynak seçici — dropdown */
+.source-switcher-wrap { position:relative; }
+.src-toggle-btn { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.7); font-family:inherit; font-size:12px; font-weight:500; padding:6px 12px; border-radius:8px; cursor:none; display:flex; align-items:center; gap:6px; transition:all .2s; white-space:nowrap; }
+.src-toggle-btn:hover { background:rgba(255,255,255,.12); color:var(--text); }
+.source-menu { position:absolute; bottom:calc(100% + 6px); left:0; background:#0d1117; border:1px solid var(--border); border-radius:10px; padding:6px; display:flex; flex-direction:column; gap:2px; min-width:130px; z-index:20; box-shadow:0 8px 24px rgba(0,0,0,.5); }
+.src-menu-item { background:none; border:none; color:var(--muted); font-family:inherit; font-size:13px; padding:8px 12px; border-radius:6px; text-align:left; cursor:none; transition:all .15s; }
+.src-menu-item:hover { background:rgba(255,255,255,.06); color:var(--text); }
+.src-menu-item.active { background:rgba(232,200,64,.1); color:var(--accent); }
+/* eski kaynak seçici (kaldırıldı ama geriye dönük) */
 .source-switcher { display:flex; gap:6px; align-items:center; }
 .src-btn { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.5); font-family:inherit; font-size:11px; font-weight:600; letter-spacing:.5px; padding:5px 11px; border-radius:6px; cursor:none; transition:all .2s; white-space:nowrap; }
 .src-btn:hover { background:rgba(255,255,255,.12); color:var(--text); }
@@ -1433,7 +1453,7 @@ async function loadSection(containerId, path, params, mediaType, page=1) {
     const d = await api(path, { ...params, page });
     // 'auto' modunda TMDB'nin media_type alanını kullan (trending/all gibi karma endpoint'ler için)
     el.innerHTML = d.results
-      .filter(m => m.poster_path)
+      .filter(m => m.poster_path && (m.vote_count === undefined || m.vote_count >= 20))
       .slice(0, 20)
       .map(m => {
         const mt = mediaType === 'auto' ? (m.media_type || (m.title ? 'movie' : 'tv')) : (mediaType || (m.title ? 'movie' : 'tv'));
@@ -1508,9 +1528,17 @@ async function browseLoad(page, reset) {
   try {
     const path = browseState.type === 'tv' ? '/discover/tv' : '/discover/movie';
     const params = {
-      sort_by: browseState.sortBy, page, 'vote_count.gte': 50,
-      without_original_language: 'tr'  // Yerli yapımları gizle
+      sort_by: browseState.sortBy, page,
+      'vote_count.gte': browseState.sortBy === 'vote_average.desc' ? 200 : 100,  // Puana göre sıralamada daha sıkı
+      'vote_average.gte': browseState.sortBy === 'vote_average.desc' ? 6.0 : 0,  // Puanlılar için min 6.0
+      without_original_language: 'tr',  // Yerli yapımları gizle
+      include_adult: false,
+      'with_runtime.gte': browseState.type === 'movie' ? 60 : 0,  // Filmler için min 60dk (kısa film/bölüm filtrele)
     };
+    // Yayına girmemiş filmleri gizle (bugünden sonra çıkacaklar)
+    if (browseState.type === 'movie' && !browseState.year) {
+      params['primary_release_date.lte'] = new Date().toISOString().split('T')[0];
+    }
     if (browseState.genreId) params.with_genres = browseState.genreId;
     if (browseState.year) {
       if (browseState.type === 'tv') { params['first_air_date.gte'] = browseState.year+'-01-01'; params['first_air_date.lte'] = browseState.year+'-12-31'; }
@@ -1609,8 +1637,15 @@ async function renderDetailPage(id, mediaType) {
               <div class="pc-meta" id="pcMeta">${year}${runtime ? ' · ' + runtime : ''} · ★ ${rating}</div>
             </div>
             <div class="pc-center">
-              <div class="source-switcher" id="sourceControls">
-                ${PLAYER_SOURCES.map((s,i) => `<button class="src-btn${i===0?' active':''}" onclick="switchSource(${i})">${s.name}</button>`).join('')}
+              <div class="source-switcher-wrap">
+                <button class="src-toggle-btn" onclick="toggleSourceMenu()" id="srcToggleBtn">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span id="srcToggleLabel">Kaynak 1</span>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+                </button>
+                <div class="source-menu" id="sourceMenu" style="display:none">
+                  ${PLAYER_SOURCES.map((s,i) => `<button class="src-menu-item${i===0?' active':''}" onclick="switchSource(${i});toggleSourceMenu()">${s.name}</button>`).join('')}
+                </div>
               </div>
             </div>
             <div class="pc-right">
@@ -1917,13 +1952,19 @@ const PLAYER_SOURCES = [
     if (type === 'tv') { p.set('nextEpisode','true'); p.set('episodeSelector','true'); return `https://www.vidking.net/embed/tv/${id}/${s}/${e}?${p}`; }
     return `https://www.vidking.net/embed/movie/${id}?${p}`;
   }},
-  { name: 'Kaynak 2', buildUrl: (id, type, s, e) => {
-    if (type === 'tv') return `https://vidsrc.to/embed/tv/${id}/${s}/${e}`;
-    return `https://vidsrc.to/embed/movie/${id}`;
+  { name: 'Kaynak 2', buildUrl: (id, type, s, e, sec) => {
+    const p = new URLSearchParams();
+    if (sec > 10) p.set('t', String(Math.floor(sec)));
+    const q = p.toString() ? '?' + p : '';
+    if (type === 'tv') return `https://vidsrc.to/embed/tv/${id}/${s}/${e}${q}`;
+    return `https://vidsrc.to/embed/movie/${id}${q}`;
   }},
-  { name: 'Kaynak 3', buildUrl: (id, type, s, e) => {
-    if (type === 'tv') return `https://vidsrc.xyz/embed/tv?tmdb=${id}&season=${s}&episode=${e}`;
-    return `https://vidsrc.xyz/embed/movie?tmdb=${id}`;
+  { name: 'Kaynak 3', buildUrl: (id, type, s, e, sec) => {
+    const p = new URLSearchParams({ tmdb: id });
+    if (type === 'tv') { p.set('season', s); p.set('episode', e); }
+    if (sec > 10) p.set('t', String(Math.floor(sec)));
+    const base = type === 'tv' ? 'https://vidsrc.xyz/embed/tv' : 'https://vidsrc.xyz/embed/movie';
+    return `${base}?${p}`;
   }},
   { name: 'Kaynak 4', buildUrl: (id, type, s, e) => {
     if (type === 'tv') return `https://embed.su/embed/tv/${id}/${s}/${e}`;
@@ -1960,7 +2001,7 @@ window.startPlayer = function(id, mediaType, season, episode, startSec, sourceId
       allowfullscreen
       allow="autoplay; fullscreen; picture-in-picture"
       referrerpolicy="no-referrer-when-downgrade"
-      onload="document.getElementById('playerLoading')?.remove()"
+      onload="onPlayerIframeLoad(${Math.floor(startSec || 0)})"
     ></iframe>`;
 
   // Kaynak kontrollerini güncelle
@@ -1997,12 +2038,68 @@ window.switchSource = function(idx) {
   startPlayer(id, mediaType, season, episode, 0, idx);
 };
 
-function _updateSourceControls(isTv) {
-  const ctrl = document.getElementById('sourceControls');
-  if (!ctrl) return;
-  ctrl.innerHTML = PLAYER_SOURCES.map((s, i) =>
-    `<button class="src-btn${i === _currentSourceIdx ? ' active' : ''}" onclick="switchSource(${i})">${s.name}</button>`
-  ).join('');
+window.onPlayerIframeLoad = function(resumeSec) {
+  // Loading overlay'i kaldır
+  document.getElementById('playerLoading')?.remove();
+
+  // Kaldığı yer varsa overlay göster
+  if (resumeSec > 10) {
+    const wrap = document.getElementById('playerWrap');
+    if (!wrap) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'resumeOverlay';
+    overlay.className = 'resume-overlay';
+    overlay.innerHTML = `
+      <div class="resume-box">
+        <div class="resume-icon">⏱️</div>
+        <div class="resume-title">Kaldığın Yerden Devam Et</div>
+        <div class="resume-time">${formatTime(resumeSec)}</div>
+        <div class="resume-hint">Oynatıcı hazır olduğunda bu butona bas</div>
+        <div class="resume-btns">
+          <button class="btn-primary resume-btn" onclick="seekPlayer(${resumeSec})">
+            ▶ ${formatTime(resumeSec)}'den Başlat
+          </button>
+          <button class="btn-ghost resume-btn-skip" onclick="document.getElementById('resumeOverlay')?.remove()">
+            Baştan İzle
+          </button>
+        </div>
+      </div>`;
+    wrap.appendChild(overlay);
+    // 8 saniye sonra otomatik kapat (kullanıcı zaten izlemeye başladıysa)
+    setTimeout(() => overlay?.remove(), 8000);
+  }
+};
+
+window.seekPlayer = function(sec) {
+  document.getElementById('resumeOverlay')?.remove();
+  const iframe = document.getElementById('vidkingPlayer');
+  if (!iframe) return;
+  // postMessage ile seek dene (bazı kaynaklar destekler)
+  try {
+    iframe.contentWindow?.postMessage({ type: 'seek', time: sec }, '*');
+    iframe.contentWindow?.postMessage({ action: 'seek', value: sec }, '*');
+    iframe.contentWindow?.postMessage(JSON.stringify({ type: 'seek', time: sec }), '*');
+  } catch(e) {}
+  showToast(`${formatTime(sec)}'den devam etmeye çalışılıyor...`);
+};
+
+window.toggleSourceMenu = function() {
+  const m = document.getElementById('sourceMenu');
+  if (m) m.style.display = m.style.display === 'none' ? 'flex' : 'none';
+};
+// Dışarı tıklayınca kapat
+document.addEventListener('click', e => {
+  if (!e.target.closest('.source-switcher-wrap')) {
+    const m = document.getElementById('sourceMenu');
+    if (m) m.style.display = 'none';
+  }
+});
+
+function _updateSourceControls() {
+  const label = document.getElementById('srcToggleLabel');
+  if (label) label.textContent = PLAYER_SOURCES[_currentSourceIdx]?.name || 'Kaynak 1';
+  const items = document.querySelectorAll('.src-menu-item');
+  items.forEach((b, i) => b.classList.toggle('active', i === _currentSourceIdx));
 }// ─────────────────────────────────────────────
 const VIDKING = 'https://www.vidking.net';
 const ACCENT_HEX = 'e8c840';
@@ -2867,9 +2964,11 @@ function renderMyList() {
 // ─────────────────────────────────────────────
 function filmCardHtml(m, mediaType) {
   const title = m.title || m.name || '';
-  const year = (m.release_date || m.first_air_date || '').slice(0,4);
+  const releaseDate = m.release_date || m.first_air_date || '';
+  const year = releaseDate.slice(0,4);
+  // Yayına girmemiş içerikleri gizle (sadece filmler için, diziler için ilk yayın tarihi farklı çalışır)
+  if (mediaType === 'movie' && releaseDate && releaseDate > new Date().toISOString().split('T')[0]) return '';
   const rating = m.vote_average ? m.vote_average.toFixed(1) : '—';
-  const isNew = year >= '2024';
   return `
     <div class="film-card" onclick="navigate('detail',{id:${m.id},mediaType:'${mediaType}'})">
       <div class="fc-wrap">
@@ -2877,7 +2976,7 @@ function filmCardHtml(m, mediaType) {
           ? `<img class="fc-img" src="${IMG_W}${m.poster_path}" alt="${esc(title)}" loading="lazy">`
           : `<div class="fc-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:rgba(255,255,255,0.3);text-align:center;padding:12px">${esc(title).toUpperCase()}</div>`
         }
-        <div class="fc-badge ${isNew?'fc-new':''}">${isNew?'YENİ':'HD'}</div>
+        <div class="fc-badge">HD</div>
         <div class="fc-rating">★ ${rating}</div>
         <div class="fc-overlay"><div class="fc-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#07090e"><polygon points="5,3 19,12 5,21"/></svg></div></div>
       </div>
