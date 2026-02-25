@@ -310,18 +310,16 @@ nav.scrolled { background: rgba(7,9,14,0.96); backdrop-filter: blur(24px); borde
 .splash-ep-label { font-size: 13px; color: var(--accent); font-weight: 500; margin-top: 6px; }
 .progress-bar-wrap { height: 3px; background: rgba(255,255,255,.07); }
 .progress-bar-fill { height: 100%; background: linear-gradient(to right, var(--accent), #f0a030); transition: width .6s linear; width: 0%; }
-/* Resume overlay */
-.resume-overlay { position:absolute; bottom:70px; right:16px; z-index:10; animation: fadeInUp .3s ease; }
-.resume-box { background:rgba(7,9,14,.95); border:1px solid rgba(232,200,64,.3); border-radius:14px; padding:18px 22px; display:flex; flex-direction:column; align-items:center; gap:8px; min-width:220px; backdrop-filter:blur(12px); }
-.resume-icon { font-size:24px; }
-.resume-title { font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1.5px; color:var(--text); }
-.resume-time { font-size:22px; font-weight:700; color:var(--accent); font-family:'Bebas Neue',sans-serif; letter-spacing:2px; }
-.resume-hint { font-size:11px; color:var(--muted); text-align:center; }
-.resume-btns { display:flex; flex-direction:column; gap:8px; width:100%; margin-top:4px; }
-.resume-btn { width:100%; text-align:center; font-size:13px; padding:9px; }
-.resume-btn-skip { background:none; border:1px solid var(--border); color:var(--muted); font-size:12px; padding:7px; border-radius:8px; cursor:none; transition:all .2s; }
-.resume-btn-skip:hover { color:var(--text); border-color:var(--text); }
+/* YAKINDA bölümü — yuvarlak posterli timeline */
 @keyframes fadeInUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.upcoming-strip { display:flex; gap:28px; overflow-x:auto; padding:16px 0 20px; scrollbar-width:none; -ms-overflow-style:none; }
+.upcoming-strip::-webkit-scrollbar { display:none; }
+.uc-item { flex-shrink:0; width:120px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:none; }
+.uc-item:hover .uc-ring { border-color:var(--accent); transform:scale(1.04); }
+.uc-ring { width:110px; height:110px; border-radius:50%; overflow:hidden; border:2.5px solid rgba(255,255,255,.15); transition:all .3s; position:relative; flex-shrink:0; }
+.uc-ring img { width:100%; height:100%; object-fit:cover; display:block; }
+.uc-date-badge { position:absolute; bottom:4px; left:50%; transform:translateX(-50%); background:var(--accent2); color:#fff; font-size:9px; font-weight:700; padding:2px 8px; border-radius:10px; white-space:nowrap; letter-spacing:.5px; }
+.uc-title { font-size:11px; color:var(--text); text-align:center; line-height:1.3; font-weight:500; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; width:100%; }
 /* Kaynak seçici — dropdown */
 .source-switcher-wrap { position:relative; }
 .src-toggle-btn { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.7); font-family:inherit; font-size:12px; font-weight:500; padding:6px 12px; border-radius:8px; cursor:none; display:flex; align-items:center; gap:6px; transition:all .2s; white-space:nowrap; }
@@ -841,7 +839,7 @@ let heroIdx = 0;
 let heroTimer;
 let currentUser = JSON.parse(localStorage.getItem('cm_user') || 'null');
 let watchlist = JSON.parse(localStorage.getItem('cm_watchlist') || '[]');
-let watchHistory = JSON.parse(localStorage.getItem('cm_history') || '[]');
+// watchHistory kaldırıldı
 let userRatings = JSON.parse(localStorage.getItem('cm_ratings') || '{}');
 let userReviews = JSON.parse(localStorage.getItem('cm_reviews') || '{}');
 let browseState = { type: 'movie', genreId: null, sortBy: 'popularity.desc', year: '', page: 1, title: '', sub: '' };
@@ -959,6 +957,7 @@ function navigateInternal(page, opts = {}) {
     case 'search':   renderSearchPage(opts.query || ''); break;
     case 'profile':  renderProfilePage(); break;
     case 'calendar': renderCalendarPage(); break;
+    case 'upcoming': renderUpcomingPage(); break;
     case 'person':   if (opts.id) renderPersonPage(opts.id); else render404(); break;
     case 'dmca':     renderDmcaPage(); break;
     case 'contact':  renderContactPage(); break;
@@ -1025,30 +1024,8 @@ async function renderHomePage() {
   el.innerHTML = `
     <div id="heroSection"><div style="height:100vh;display:flex;align-items:center;justify-content:center"><div class="spinner"></div></div></div>
 
-    ${watchHistory.length ? `
-    <div class="sec" style="padding-top:24px;padding-bottom:8px">
-      <div class="sec-head">
-        <div><div class="sec-title">KALDIĞIN <span>YERDEN</span></div><div class="sec-sub">Son izlediklerin</div></div>
-        <a class="see-all" href="#" onclick="navigate('profile');return false">Tümü →</a>
-      </div>
-      <div class="h-scroll-wrap">
-        <div class="h-scroll" id="continueRow">${watchHistory.slice(0,10).map(h => `
-          <div class="film-card" onclick="navigate('detail',{id:${h.id},mediaType:'${h.mediaType}'})">
-            <div class="fc-wrap">
-              <img class="fc-img" src="${h.poster ? IMG_W+h.poster : ''}" alt="${esc(h.title)}" onerror="this.style.background='var(--card2)'">
-              <div class="fc-badge">%${Math.round(h.progress||0)}</div>
-              <div class="fc-overlay"><div class="fc-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#07090e"><polygon points="5,3 19,12 5,21"/></svg></div></div>
-              <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--border)"><div style="height:100%;width:${Math.round(h.progress||0)}%;background:var(--accent)"></div></div>
-            </div>
-            <div class="fc-info"><div class="fc-title">${esc(h.title)}</div><div class="fc-meta"><span>${h.mediaType==='tv'?'Dizi':'Film'}</span></div></div>
-          </div>`).join('')}
-        </div>
-        <button class="scroll-btn left" onclick="scrollRowEl(this,-1)">&#8249;</button>
-        <button class="scroll-btn right" onclick="scrollRowEl(this,1)">&#8250;</button>
-      </div>
-    </div>` : ''}
 
-    <div class="sec" style="padding-top:${watchHistory.length?'8px':'32px'}">
+    <div class="sec" style="padding-top:32px">
       <div class="sec-head"><div><div class="sec-title">KATEGORİLER</div></div></div>
       ${renderCategories()}
     </div>
@@ -1162,6 +1139,24 @@ async function renderHomePage() {
       </div>
     </div>
 
+    <!-- YAKINDA GELİYOR — ekran görüntüsündeki gibi yuvarlak poster timeline -->
+    <div class="sec" style="padding-top:8px">
+      <div class="sec-head">
+        <div>
+          <div class="sec-title">YAKINDA <span>GELİYOR</span></div>
+          <div class="sec-sub">Yakın süreçte vizyona girecek filmler</div>
+        </div>
+        <a class="see-all" href="#" onclick="navigate('upcoming');return false">Tüm Fragmanlar →</a>
+      </div>
+      <div class="h-scroll-wrap">
+        <div class="upcoming-strip" id="upcomingStrip">
+          <!-- JS ile doldurulacak -->
+        </div>
+        <button class="scroll-btn left" onclick="scrollRowEl(this,-1)">&#8249;</button>
+        <button class="scroll-btn right" onclick="scrollRowEl(this,1)">&#8250;</button>
+      </div>
+    </div>
+
     <footer class="site-footer">
       <!-- Marka sütunu -->
       <div class="footer-brand">
@@ -1182,6 +1177,7 @@ async function renderHomePage() {
           <li><a href="#" onclick="navigate('series');return false">Diziler</a></li>
           <li><a href="#" onclick="navigate('browse',{type:'movie',title:'KATEGORİLER'});return false">Kategoriler</a></li>
           <li><a href="#" onclick="navigate('new');return false">Yeni Vizyonlar</a></li>
+          <li><a href="#" onclick="navigate('upcoming');return false">Yakında Geliyor</a></li>
         </ul>
       </div>
 
@@ -1233,9 +1229,17 @@ async function renderHomePage() {
   loadCuratedSeries('classicSeries', TR_CLASSIC_SERIES);
 
   // TMDB gerçek zamanlı
-  loadSection('weeklyTrending', '/trending/all/week', {}, 'auto');
-  loadSection('popularSeriesLive', '/tv/popular', { with_origin_country:'US|GB|KR|JP' }, 'tv');
-  loadSection('newRelease', '/movie/now_playing', {}, 'movie');
+  loadSection('weeklyTrending', '/trending/all/week', { 'vote_count.gte': 50 }, 'auto');
+  // Tagesschau gibi haber programları, belgesel kanalları filtrele (vote_count yüksek tutarak)
+  loadSection('popularSeriesLive', '/discover/tv', {
+    sort_by: 'popularity.desc',
+    with_origin_country: 'US|GB|KR|JP|FR|ES',
+    without_genres: '10763,99',  // 10763=News, 99=Documentary
+    'vote_count.gte': 100,
+    with_type: '2|4'  // 2=Miniseries, 4=Scripted
+  }, 'tv');
+  loadSection('newRelease', '/movie/now_playing', { 'vote_count.gte': 30, without_genres: '10763,99' }, 'movie');
+  loadUpcomingStrip();
 }
 
 // Küratörlü dizi listesini yükle (ID listesinden)
@@ -1258,7 +1262,7 @@ async function loadCuratedSeries(containerId, list) {
         <div class="film-card" onclick="navigate('detail',{id:${m.id},mediaType:'tv'})">
           <div class="fc-wrap">
             <img class="fc-img" src="${IMG_W}${m.poster_path}" alt="${esc(title)}" loading="lazy">
-            <div class="fc-badge ${isNew?'fc-new':''}">${isNew?'YENİ':'HD'}</div>
+            <div class="fc-badge">HD</div>
             <div class="fc-rating">★ ${rating}</div>
             <div class="fc-overlay"><div class="fc-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#07090e"><polygon points="5,3 19,12 5,21"/></svg></div></div>
           </div>
@@ -1280,6 +1284,55 @@ async function loadCuratedMovies(containerId, idList) {
     .filter(r => r.status === 'fulfilled' && r.value.poster_path)
     .map(r => filmCardHtml(r.value, 'movie'))
     .join('');
+}
+
+// ─────────────────────────────────────────────
+// YAKINDA — yuvarlak poster timeline
+// ─────────────────────────────────────────────
+async function loadUpcomingStrip() {
+  const el = document.getElementById('upcomingStrip');
+  if (!el) return;
+  el.innerHTML = Array(8).fill(`<div class="uc-item"><div class="uc-ring" style="background:var(--card2)"></div><div style="height:10px;width:80px;background:var(--card2);border-radius:4px;margin-top:8px"></div></div>`).join('');
+  try {
+    const today = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const from = `${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+    // 6 ay sonrasına kadar
+    const futureDate = new Date(today);
+    futureDate.setMonth(futureDate.getMonth() + 6);
+    const to = `${futureDate.getFullYear()}-${pad(futureDate.getMonth()+1)}-${pad(futureDate.getDate())}`;
+
+    const d = await api('/discover/movie', {
+      sort_by: 'popularity.desc',
+      'primary_release_date.gte': from,
+      'primary_release_date.lte': to,
+      'vote_count.gte': 5,
+      page: 1
+    });
+
+    const items = d.results.filter(m => m.poster_path).slice(0, 14);
+    if (!items.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:20px">Yakında gelecek film bulunamadı</div>'; return; }
+
+    el.innerHTML = items.map(m => {
+      const rd = m.release_date || '';
+      let dateBadge = '';
+      if (rd) {
+        const d = new Date(rd);
+        dateBadge = `${pad(d.getDate())} ${TR_MONTHS[d.getMonth()]}`;
+      }
+      const title = m.title || m.original_title || '';
+      return `
+        <div class="uc-item" onclick="navigate('detail',{id:${m.id},mediaType:'movie'})">
+          <div class="uc-ring">
+            <img src="${IMG_W}${m.poster_path}" alt="${esc(title)}" loading="lazy">
+            ${dateBadge ? `<div class="uc-date-badge">${dateBadge}</div>` : ''}
+          </div>
+          <div class="uc-title">${esc(title)}</div>
+        </div>`;
+    }).join('');
+  } catch(e) {
+    console.error('loadUpcomingStrip error:', e);
+  }
 }
 
 // Hero: küratörlü listeden rastgele bir dizi/film
@@ -1603,10 +1656,8 @@ async function renderDetailPage(id, mediaType) {
       : [];
 
     // Saved progress for this content
-    const progressKey = `cm_progress_${mediaType}_${id}`;
-    const savedProgress = JSON.parse(localStorage.getItem(progressKey) || 'null');
-    const savedSeconds = savedProgress?.timestamp || 0;
-    const progressPct = savedProgress?.progress || 0;
+    const savedSeconds = 0;
+    const progressPct = 0;
     const firstSeason = seasons[0]?.season_number || 1;
     const firstEp = 1;
 
@@ -1616,17 +1667,15 @@ async function renderDetailPage(id, mediaType) {
 
         <!-- SOL: Player -->
         <div class="player-main">
-          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBarFill" style="width:${progressPct}%"></div></div>
           <div class="player-wrap" id="playerWrap">
             <div class="player-splash" id="playerSplash">
               <img class="player-splash-bg" src="${detail.backdrop_path ? IMG_L + detail.backdrop_path : ''}" alt="" onerror="this.style.display='none'">
               <div class="player-splash-content">
-                <button class="splash-play-btn" onclick="startPlayer(${id},'${mediaType}',${firstSeason},${firstEp},${savedSeconds})">
+                <button class="splash-play-btn" onclick="startPlayer(${id},'${mediaType}',${firstSeason},${firstEp},0)">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="#07090e"><polygon points="5,3 19,12 5,21"/></svg>
                 </button>
                 <div class="splash-title">${esc(title).toUpperCase()}</div>
                 <div class="splash-meta">${year}${runtime ? ' · ' + runtime : ''} · ★ ${rating}</div>
-                ${savedSeconds > 0 ? `<div class="splash-ep-label">▶ Kaldığın yerden devam et (${formatTime(savedSeconds)})</div>` : ''}
                 ${mediaType === 'tv' && seasons.length ? `<div class="splash-ep-label" id="splashEpLabel">S${String(firstSeason).padStart(2,'0')} E${String(firstEp).padStart(2,'0')}</div>` : ''}
               </div>
             </div>
@@ -1649,8 +1698,7 @@ async function renderDetailPage(id, mediaType) {
               </div>
             </div>
             <div class="pc-right">
-              ${savedSeconds > 0 ? `<span class="pc-progress-text" id="pcProgress">%${Math.round(progressPct)} izlendi</span>` : '<span class="pc-progress-text" id="pcProgress"></span>'}
-              <button class="btn-sm" onclick="startPlayer(${id},'${mediaType}',${firstSeason},${firstEp},${savedSeconds})">
+              <button class="btn-sm" onclick="startPlayer(${id},'${mediaType}',${firstSeason},${firstEp},0)">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
                 OYNAT
               </button>
@@ -1718,7 +1766,7 @@ async function renderDetailPage(id, mediaType) {
             <p class="dh-overview">${esc(detail.overview || 'Bu içerik için Türkçe açıklama bulunamadı.')}</p>
             ${director ? `<div class="dh-director"><span class="dh-dir-label">Yönetmen</span> <span class="dh-dir-name">${esc(director)}</span></div>` : ''}
             <div class="dh-btns">
-              <button class="btn-watch-big" onclick="startPlayer(${id},'${mediaType}',${firstSeason},${firstEp},${savedSeconds});window.scrollTo({top:0,behavior:'smooth'})">
+              <button class="btn-watch-big" onclick="startPlayer(${id},'${mediaType}',${firstSeason},${firstEp},0);window.scrollTo({top:0,behavior:'smooth'})">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
                 ŞİMDİ İZLE
               </button>
@@ -1821,8 +1869,7 @@ async function renderDetailPage(id, mediaType) {
     }
 
     // Progress tracking listener
-    initProgressTracking(id, mediaType);
-
+  
   } catch(e) {
     el.innerHTML = '<div style="padding:80px;text-align:center;color:var(--muted)">İçerik yüklenirken hata oluştu.</div>';
   }
@@ -2001,7 +2048,7 @@ window.startPlayer = function(id, mediaType, season, episode, startSec, sourceId
       allowfullscreen
       allow="autoplay; fullscreen; picture-in-picture"
       referrerpolicy="no-referrer-when-downgrade"
-      onload="onPlayerIframeLoad(${Math.floor(startSec || 0)})"
+      onload="onPlayerIframeLoad()"
     ></iframe>`;
 
   // Kaynak kontrollerini güncelle
@@ -2038,49 +2085,8 @@ window.switchSource = function(idx) {
   startPlayer(id, mediaType, season, episode, 0, idx);
 };
 
-window.onPlayerIframeLoad = function(resumeSec) {
-  // Loading overlay'i kaldır
+window.onPlayerIframeLoad = function() {
   document.getElementById('playerLoading')?.remove();
-
-  // Kaldığı yer varsa overlay göster
-  if (resumeSec > 10) {
-    const wrap = document.getElementById('playerWrap');
-    if (!wrap) return;
-    const overlay = document.createElement('div');
-    overlay.id = 'resumeOverlay';
-    overlay.className = 'resume-overlay';
-    overlay.innerHTML = `
-      <div class="resume-box">
-        <div class="resume-icon">⏱️</div>
-        <div class="resume-title">Kaldığın Yerden Devam Et</div>
-        <div class="resume-time">${formatTime(resumeSec)}</div>
-        <div class="resume-hint">Oynatıcı hazır olduğunda bu butona bas</div>
-        <div class="resume-btns">
-          <button class="btn-primary resume-btn" onclick="seekPlayer(${resumeSec})">
-            ▶ ${formatTime(resumeSec)}'den Başlat
-          </button>
-          <button class="btn-ghost resume-btn-skip" onclick="document.getElementById('resumeOverlay')?.remove()">
-            Baştan İzle
-          </button>
-        </div>
-      </div>`;
-    wrap.appendChild(overlay);
-    // 8 saniye sonra otomatik kapat (kullanıcı zaten izlemeye başladıysa)
-    setTimeout(() => overlay?.remove(), 8000);
-  }
-};
-
-window.seekPlayer = function(sec) {
-  document.getElementById('resumeOverlay')?.remove();
-  const iframe = document.getElementById('vidkingPlayer');
-  if (!iframe) return;
-  // postMessage ile seek dene (bazı kaynaklar destekler)
-  try {
-    iframe.contentWindow?.postMessage({ type: 'seek', time: sec }, '*');
-    iframe.contentWindow?.postMessage({ action: 'seek', value: sec }, '*');
-    iframe.contentWindow?.postMessage(JSON.stringify({ type: 'seek', time: sec }), '*');
-  } catch(e) {}
-  showToast(`${formatTime(sec)}'den devam etmeye çalışılıyor...`);
 };
 
 window.toggleSourceMenu = function() {
@@ -2104,46 +2110,7 @@ function _updateSourceControls() {
 const VIDKING = 'https://www.vidking.net';
 const ACCENT_HEX = 'e8c840';
 
-window.startPlayer = function(id, mediaType, season, episode, startSec) {
-
-
-  const wrap = document.getElementById('playerWrap');
-  if (!wrap) return;
-
-  // Build Vidking URL
-  let src;
-  const params = new URLSearchParams({ color: ACCENT_HEX, autoPlay: 'true' });
-  if (startSec > 10) params.set('progress', String(Math.floor(startSec)));
-
-  if (mediaType === 'movie') {
-    src = `${VIDKING}/embed/movie/${id}?${params}`;
-  } else {
-    params.set('nextEpisode', 'true');
-    params.set('episodeSelector', 'true');
-    src = `${VIDKING}/embed/tv/${id}/${season}/${episode}?${params}`;
-  }
-
-  // Remove splash, inject iframe
-  wrap.innerHTML = `<iframe
-    id="vidkingPlayer"
-    class="player-iframe"
-    src="${src}"
-    allowfullscreen
-    allow="autoplay; fullscreen; picture-in-picture"
-    referrerpolicy="no-referrer-when-downgrade">
-  </iframe>`;
-
-  // Update controls label
-  const title = currentDetail?.detail?.title || currentDetail?.detail?.name || '';
-  const pcTitle = document.getElementById('pcTitle');
-  if (pcTitle) {
-    if (mediaType === 'tv') {
-      pcTitle.textContent = `${title} — S${String(season).padStart(2,'0')} E${String(episode).padStart(2,'0')}`;
-    } else {
-      pcTitle.textContent = title;
-    }
-  }
-};
+// (eski startPlayer kaldırıldı)
 
 window.playEpisode = function(seriesId, season, episode, name) {
   // Sidebar'da aktif bölümü işaretle
@@ -2155,109 +2122,17 @@ window.playEpisode = function(seriesId, season, episode, name) {
   const splashLabel = document.getElementById('splashEpLabel');
   if (splashLabel) splashLabel.textContent = `S${String(season).padStart(2,'0')} E${String(episode).padStart(2,'0')} — ${name}`;
 
-  // Load saved progress for this episode
-  const epKey = `cm_progress_tv_${seriesId}_s${season}e${episode}`;
-  const saved = JSON.parse(localStorage.getItem(epKey) || 'null');
-  const startSec = saved?.timestamp || 0;
-
-  startPlayer(seriesId, 'tv', season, episode, startSec);
+  startPlayer(seriesId, 'tv', season, episode, 0);
   window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  if (startSec > 10) {
-    showToast(`S${String(season).padStart(2,'0')}E${String(episode).padStart(2,'0')} · Kaldığın yerden devam ediliyor (${formatTime(startSec)})`);
-  } else {
-    showToast(`S${String(season).padStart(2,'0')}E${String(episode).padStart(2,'0')} · "${name}" başlatılıyor 🎬`);
-  }
+  showToast(`S${String(season).padStart(2,'0')}E${String(episode).padStart(2,'0')} · "${name}" başlatılıyor 🎬`);
 };
 
 window.playContent = function(id, mediaType) {
-
-  const progressKey = `cm_progress_${mediaType}_${id}`;
-  const saved = JSON.parse(localStorage.getItem(progressKey) || 'null');
-  const startSec = saved?.timestamp || 0;
-  startPlayer(id, mediaType, saved?.season || 1, saved?.episode || 1, startSec);
+  startPlayer(id, mediaType, 1, 1, 0);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// ─────────────────────────────────────────────
-// PROGRESS TRACKING
-// ─────────────────────────────────────────────
-function initProgressTracking(id, mediaType) {
-  // Remove any previous listener
-  if (window._progressHandler) window.removeEventListener('message', window._progressHandler);
 
-  window._progressHandler = function(event) {
-    if (typeof event.data !== 'string') return;
-    let msg;
-    try { msg = JSON.parse(event.data); } catch(e) { return; }
-    if (msg.type !== 'PLAYER_EVENT') return;
-
-    const d = msg.data;
-    if (!d || !d.progress) return;
-
-    // Update progress bar
-    const fill = document.getElementById('progressBarFill');
-    if (fill) fill.style.width = Math.min(d.progress, 100) + '%';
-
-    // Update progress text
-    const pcProg = document.getElementById('pcProgress');
-    if (pcProg && d.currentTime) {
-      pcProg.textContent = `${formatTime(d.currentTime)} / ${formatTime(d.duration)}`;
-    }
-
-    // Save to localStorage
-    const baseKey = `cm_progress_${mediaType}_${id}`;
-    const progressData = {
-      progress: d.progress,
-      timestamp: d.currentTime,
-      duration: d.duration,
-      updatedAt: Date.now(),
-      season: d.season,
-      episode: d.episode
-    };
-    localStorage.setItem(baseKey, JSON.stringify(progressData));
-
-    // Update watch history
-    const det = currentDetail?.detail;
-    if (det) {
-      const htitle = det.title || det.name || '';
-      const hposter = det.poster_path || '';
-      addToHistory(id, mediaType, htitle, hposter, d.progress);
-    }
-
-    // Also save per-episode key for TV
-    if (mediaType === 'tv' && d.season && d.episode) {
-      const epKey = `cm_progress_tv_${id}_s${d.season}e${d.episode}`;
-      localStorage.setItem(epKey, JSON.stringify(progressData));
-
-      // Update episode card progress indicator if visible
-      const epCards = document.querySelectorAll('.episode-card');
-      epCards.forEach(card => {
-        const epNum = card.querySelector('.ep-num')?.textContent?.trim();
-        if (epNum && parseInt(epNum) === d.episode) {
-          let bar = card.querySelector('.ep-progress-bar');
-          if (!bar) {
-            bar = document.createElement('div');
-            bar.className = 'ep-progress-bar';
-            bar.style.cssText = 'height:2px;background:linear-gradient(to right,var(--accent),#f0a030);border-radius:0 0 0 0;position:absolute;bottom:0;left:0;transition:width .5s';
-            card.style.position = 'relative';
-            card.appendChild(bar);
-          }
-          bar.style.width = Math.min(d.progress, 100) + '%';
-        }
-      });
-
-      // Show "watched" badge when complete
-      if (d.event === 'ended' || d.progress >= 90) {
-        showToast('Bölüm tamamlandı ✓');
-      }
-    } else if (d.event === 'ended' || d.progress >= 90) {
-      showToast('Film tamamlandı ✓ İyi seyirler! 🎬');
-    }
-  };
-
-  window.addEventListener('message', window._progressHandler);
-}
 
 // ─────────────────────────────────────────────
 // THEME
@@ -2389,12 +2264,12 @@ function renderProfilePage() {
     </div>`; return;
   }
   const av = AVATARS[selectedAvatarIdx];
-  const totalWatched = watchHistory.length;
+  const totalWatched = 0;
   const totalRated = Object.keys(userRatings).length;
   const totalList = watchlist.length;
   const ratingHistory = Object.entries(userRatings).slice(0,8).map(([key, val]) => {
     const [type, id] = key.split('_');
-    const h = watchHistory.find(h => h.id == id) || {};
+    const h = {};
     return { key, type, id, rating: val, title: h.title || 'Bilinmeyen', poster: h.poster };
   });
 
@@ -2416,7 +2291,7 @@ function renderProfilePage() {
     <div class="profile-body">
       <div>
         <div class="profile-section-title">İZLEME <span>GEÇMİŞİ</span></div>
-        ${watchHistory.length ? watchHistory.slice(0,20).map(h => `
+        ${'<!-- izleme geçmişi kaldırıldı -->' ? '' : watchHistory.slice(0,20).map(h => `
           <div class="history-item" onclick="navigate('detail',{id:${h.id},mediaType:'${h.mediaType}'})">
             <img class="hi-poster" src="${h.poster ? IMG_W+h.poster : ''}" alt="${esc(h.title)}" onerror="this.style.background='var(--card2)'">
             <div class="hi-info">
@@ -2617,6 +2492,71 @@ function render404() {
       ANA SAYFAYA DÖN
     </button>
   </div>`;
+}
+
+// ─────────────────────────────────────────────
+// YAKINDA PAGE
+// ─────────────────────────────────────────────
+const TR_MONTHS = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+
+async function renderUpcomingPage() {
+  showPage('calendar');
+  const el = document.getElementById('page-calendar');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="browse-header">
+      <div class="browse-title">YAKINDA <span>GELİYOR</span></div>
+      <div class="browse-sub">Yakın süreçte vizyona girecek filmler</div>
+    </div>
+    <div class="browse-content" id="upcomingPageGrid">
+      <div style="text-align:center;padding:80px 0"><div class="spinner" style="margin:0 auto"></div></div>
+    </div>`;
+
+  try {
+    const today = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const from = today.toISOString().split('T')[0];
+    const futureDate = new Date(today); futureDate.setMonth(futureDate.getMonth()+9);
+    const to = futureDate.toISOString().split('T')[0];
+
+    const [p1, p2] = await Promise.all([
+      api('/discover/movie', { sort_by:'popularity.desc', 'primary_release_date.gte':from, 'primary_release_date.lte':to, page:1 }),
+      api('/discover/movie', { sort_by:'popularity.desc', 'primary_release_date.gte':from, 'primary_release_date.lte':to, page:2 })
+    ]);
+
+    const movies = [...(p1.results||[]), ...(p2.results||[])].filter(m => m.poster_path);
+    movies.sort((a,b) => (a.release_date||'').localeCompare(b.release_date||''));
+
+    const grid = document.getElementById('upcomingPageGrid');
+    if (!grid) return;
+    grid.innerHTML = `<div class="film-grid">` +
+      movies.map(m => {
+        const rd = m.release_date || '';
+        let dateStr = '';
+        if (rd) {
+          const dt = new Date(rd);
+          dateStr = `${pad(dt.getDate())} ${TR_MONTHS[dt.getMonth()]} ${dt.getFullYear()}`;
+        }
+        const title = m.title || m.original_title || '';
+        const rating = m.vote_average ? m.vote_average.toFixed(1) : '—';
+        return `<div class="film-card" onclick="navigate('detail',{id:${m.id},mediaType:'movie'})">
+          <div class="fc-wrap">
+            <img class="fc-img" src="${IMG_W}${m.poster_path}" alt="${esc(title)}" loading="lazy">
+            <div class="fc-badge" style="background:rgba(255,79,79,.2);border-color:rgba(255,79,79,.4);color:#ff6b6b">YAKINDA</div>
+            <div class="fc-rating">★ ${rating}</div>
+            <div class="fc-overlay"><div class="fc-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#07090e"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+          </div>
+          <div class="fc-info">
+            <div class="fc-title">${esc(title)}</div>
+            <div class="fc-meta"><span style="color:var(--accent2)">${dateStr||'Yakında'}</span></div>
+          </div>
+        </div>`;
+      }).join('') +
+    `</div>`;
+  } catch(e) {
+    const g = document.getElementById('upcomingPageGrid');
+    if (g) g.innerHTML = '<p style="color:var(--muted);padding:40px">Yüklenirken hata oluştu.</p>';
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -2853,7 +2793,6 @@ window.setRating = function(id, mediaType, title, poster, val) {
   document.querySelectorAll(`#starRow_${id} .star`).forEach((s,i) => s.classList.toggle('active', i<val));
   const sub = document.querySelector(`#starRow_${id}`).nextElementSibling;
   if (sub) { sub.style.color = 'var(--accent)'; sub.textContent = `Puanın: ${val}/5 ★`; }
-  addToHistory(id, mediaType, title, poster, 0);
   showToast(`${val}/5 ★ puanı kaydedildi ✓`);
 };
 window.submitReview = function(id, mediaType, title, poster) {
@@ -2870,22 +2809,7 @@ window.submitReview = function(id, mediaType, title, poster) {
   showToast('Yorumun paylaşıldı ✓');
 };
 
-// ─────────────────────────────────────────────
-// WATCH HISTORY
-// ─────────────────────────────────────────────
-function addToHistory(id, mediaType, title, poster, progress) {
-  const idx = watchHistory.findIndex(h => h.id === id && h.mediaType === mediaType);
-  const item = { id, mediaType, title, poster, progress, watchedAt: Date.now() };
-  if (idx >= 0) watchHistory[idx] = item; else watchHistory.unshift(item);
-  if (watchHistory.length > 50) watchHistory = watchHistory.slice(0,50);
-  localStorage.setItem('cm_history', JSON.stringify(watchHistory));
-}
 
-function initHistory() {
-  // Rewire progress tracking to also update watch history
-  const origHandler = window._progressHandler;
-  // Will be initialized per-detail page, nothing to do here globally
-}
 
 function formatTime(sec) {
   if (!sec) return '0:00';
