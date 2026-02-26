@@ -1,7 +1,7 @@
-"use client";
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 
-// --- AYARLAR ---
+// --- CONFIG ---
 const API_KEY = '4b19cfb150897a9071d51539b2ffc42f';
 const BASE_URL = 'https://api.themoviedb.org/3';
 
@@ -11,69 +11,111 @@ export default function NeIzlesen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Veri Çekme (Trendler veya Arama)
-  useEffect(() => {
-    const fetchContent = async () => {
-      setLoading(true);
-      const endpoint = searchQuery 
-        ? `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${searchQuery}&language=tr-TR`
+  // Veri Çekme Fonksiyonu
+  const fetchContent = async (query = '') => {
+    setLoading(true);
+    try {
+      const endpoint = query 
+        ? `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(query)}&language=tr-TR`
         : `${BASE_URL}/trending/all/day?api_key=${API_KEY}&language=tr-TR`;
       
       const res = await fetch(endpoint);
       const data = await res.json();
       setItems(data.results || []);
-      setLoading(false);
-    };
+    } catch (err) {
+      console.error("Veri çekilemedi:", err);
+    }
+    setLoading(false);
+  };
 
-    const timeoutId = setTimeout(fetchContent, 500); // Debounce search
-    return () => clearTimeout(timeoutId);
+  useEffect(() => {
+    const timer = setTimeout(() => fetchContent(searchQuery), 500);
+    return () => clearTimeout(timer);
   }, [searchQuery]);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 font-sans selection:bg-red-600">
-      {/* HEADER */}
-      <header className="sticky top-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-zinc-800 p-4">
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-red-600">
+      <Head>
+        <title>Ne İzlesen | Film ve Dizi Portalı</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+      </Head>
+
+      {/* NAVBAR */}
+      <nav className="sticky top-0 z-50 bg-black/90 backdrop-blur-md border-b border-zinc-800 px-6 py-4">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <h1 className="text-2xl font-black tracking-tighter text-red-600 italic">NE İZLESEN</h1>
+          <h1 className="text-3xl font-black tracking-tighter text-red-600 italic cursor-pointer" onClick={() => window.location.reload()}>
+            NE İZLESEN
+          </h1>
           <input 
             type="text" 
             placeholder="Film veya dizi ara..." 
-            className="w-full md:w-96 bg-zinc-900 border border-zinc-700 rounded-full px-6 py-2 focus:outline-none focus:border-red-600 transition-all text-sm"
+            className="w-full md:w-96 bg-zinc-900 border border-zinc-700 rounded-full px-6 py-2.5 focus:outline-none focus:border-red-600 transition-all text-sm text-white"
+            value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-      </header>
+      </nav>
 
-      {/* MAIN CONTENT */}
-      <main className="max-w-7xl mx-auto p-6">
+      {/* HERO SECTION (Sadece Trendlerde Gösterilir) */}
+      {!searchQuery && items.length > 0 && (
+        <div className="relative h-[60vh] w-full overflow-hidden mb-10 group">
+          <img 
+            src={`https://image.tmdb.org/t/p/original${items[0].backdrop_path}`}
+            className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-700 group-hover:scale-105"
+            alt="hero"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
+          <div className="absolute bottom-10 left-10 max-w-2xl">
+            <span className="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase mb-4 inline-block tracking-widest">Günün Öne Çıkanı</span>
+            <h2 className="text-5xl font-black mb-4">{items[0].title || items[0].name}</h2>
+            <p className="text-zinc-300 line-clamp-3 mb-6">{items[0].overview}</p>
+            <button 
+              onClick={() => setSelectedContent(items[0])}
+              className="bg-white text-black font-bold px-8 py-3 rounded-full hover:bg-red-600 hover:text-white transition-colors"
+            >
+              Hemen İzle
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* CONTENT GRID */}
+      <main className="max-w-7xl mx-auto px-6 pb-20">
+        <h3 className="text-xl font-bold mb-8 text-zinc-400 uppercase tracking-widest">
+          {searchQuery ? `"${searchQuery}" Sonuçları` : 'Popüler İçerikler'}
+        </h3>
+
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+            {[...Array(10)].map((_, i) => (
+              <div key={i} className="aspect-[2/3] bg-zinc-900 animate-pulse rounded-xl" />
+            ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {items.map((item) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+            {items.filter(i => i.poster_path).map((item) => (
               <div 
                 key={item.id} 
                 onClick={() => setSelectedContent(item)}
-                className="group cursor-pointer bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 hover:border-red-600 transition-all shadow-lg"
+                className="group cursor-pointer"
               >
-                <div className="relative aspect-[2/3]">
+                <div className="relative aspect-[2/3] rounded-xl overflow-hidden border border-zinc-800 group-hover:border-red-600 transition-all shadow-2xl">
                   <img 
-                    src={item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Image'} 
+                    src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
                     alt={item.title || item.name}
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                    <span className="bg-red-600 text-white px-4 py-2 rounded-full font-bold text-xs">ŞİMDİ İZLE</span>
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
+                    <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                      <div className="w-0 h-0 border-y-[8px] border-y-transparent border-l-[12px] border-l-white ml-1" />
+                    </div>
                   </div>
                 </div>
-                <div className="p-3">
-                  <h3 className="text-sm font-bold truncate">{item.title || item.name}</h3>
-                  <div className="flex justify-between items-center mt-1">
-                    <span className="text-[10px] text-zinc-500 uppercase tracking-widest">{item.media_type === 'tv' ? 'Dizi' : 'Film'}</span>
-                    <span className="text-[10px] text-yellow-500 font-bold">★ {item.vote_average?.toFixed(1)}</span>
-                  </div>
+                <div className="mt-4 px-1">
+                  <h4 className="text-sm font-bold truncate group-hover:text-red-500 transition-colors">{item.title || item.name}</h4>
+                  <p className="text-[11px] text-zinc-500 mt-1 uppercase font-semibold">
+                    {item.media_type === 'tv' ? 'Dizi' : 'Film'} • { (item.release_date || item.first_air_date)?.split('-')[0] }
+                  </p>
                 </div>
               </div>
             ))}
@@ -81,19 +123,17 @@ export default function NeIzlesen() {
         )}
       </main>
 
-      {/* PLAYER MODAL (Overlay) */}
+      {/* MODAL PLAYER */}
       {selectedContent && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 animate-in fade-in duration-300">
-          <div className="relative w-full max-w-5xl bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl border border-zinc-800">
-            {/* Close Button */}
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6 bg-black/95 transition-all">
+          <div className="relative w-full max-w-6xl bg-[#0a0a0a] h-full md:h-auto md:rounded-3xl overflow-hidden border border-zinc-800 shadow-[0_0_50px_rgba(220,38,38,0.2)]">
             <button 
               onClick={() => setSelectedContent(null)}
-              className="absolute top-4 right-4 z-[110] bg-black/50 hover:bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+              className="absolute top-6 right-6 z-[110] bg-zinc-900/80 hover:bg-red-600 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all scale-90 hover:scale-100"
             >
               ✕
             </button>
 
-            {/* Video Player Section */}
             <div className="relative pt-[56.25%] bg-black">
               <iframe 
                 src={selectedContent.media_type === 'movie' || !selectedContent.media_type
@@ -106,25 +146,18 @@ export default function NeIzlesen() {
               />
             </div>
 
-            {/* Info Section */}
-            <div className="p-8">
-              <h2 className="text-3xl font-black mb-2">{selectedContent.title || selectedContent.name}</h2>
-              <div className="flex gap-4 text-xs text-zinc-400 mb-4 font-bold uppercase tracking-widest">
-                <span className="text-red-500">{selectedContent.release_date || selectedContent.first_air_date}</span>
-                <span>TMDB ID: {selectedContent.id}</span>
+            <div className="p-8 md:p-12 overflow-y-auto max-h-[40vh]">
+              <div className="flex items-center gap-4 mb-4">
+                <h2 className="text-3xl md:text-5xl font-black">{selectedContent.title || selectedContent.name}</h2>
+                <span className="text-yellow-500 font-bold text-xl">★ {selectedContent.vote_average?.toFixed(1)}</span>
               </div>
-              <p className="text-zinc-400 leading-relaxed max-w-3xl">
-                {selectedContent.overview || "Bu içerik için henüz bir özet eklenmemiş."}
+              <p className="text-zinc-400 text-lg leading-relaxed max-w-4xl">
+                {selectedContent.overview || "Bu içerik hakkında Türkçe özet bulunmamaktadır."}
               </p>
             </div>
           </div>
         </div>
       )}
-
-      {/* FOOTER */}
-      <footer className="p-10 text-center text-zinc-600 text-xs border-t border-zinc-900 mt-20">
-        &copy; 2026 NE İZLESEN - Cinemacity Konsept Tasarımı
-      </footer>
     </div>
   );
 }
