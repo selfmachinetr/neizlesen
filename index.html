@@ -1,206 +1,130 @@
-<!doctype html>
-<html lang="tr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ne İzlesen</title>
+"use client";
+import React, { useState, useEffect } from 'react';
 
-<style>
-:root{
-  --bg:#0b0f17;
-  --panel:#111827;
-  --accent:#e50914;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
-}
-body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
-header{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:16px 24px;border-bottom:1px solid #1f2937
-}
-h1{margin:0;font-size:20px}
-.row{margin:18px 0}
-.row h2{margin:0 0 8px 16px;font-size:16px}
-.scroller{
-  display:flex;gap:10px;overflow-x:auto;padding:0 16px 10px
-}
-.card{
-  min-width:150px;background:var(--panel);
-  border-radius:8px;overflow:hidden;cursor:pointer;
-  border:1px solid #1f2937
-}
-.card img{width:100%;aspect-ratio:2/3;object-fit:cover}
-.card .t{padding:6px;font-size:12px}
-dialog{
-  border:0;width:min(1000px,95vw);background:#020617;
-  color:white;border-radius:12px
-}
-.modal{display:grid;grid-template-columns:260px 1fr;gap:16px;padding:16px}
-.modal img{width:100%;border-radius:10px}
-iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:10px}
-button{
-  background:var(--accent);border:0;padding:8px 12px;
-  border-radius:6px;color:white;cursor:pointer
-}
-.topbar{display:flex;gap:10px;align-items:center}
-input{
-  background:#020617;border:1px solid #1f2937;color:white;
-  padding:8px;border-radius:6px
-}
-.badge{
-  background:#111827;border:1px solid #1f2937;
-  padding:4px 6px;border-radius:6px;font-size:12px
-}
-</style>
-</head>
+// --- AYARLAR ---
+const API_KEY = '4b19cfb150897a9071d51539b2ffc42f';
+const BASE_URL = 'https://api.themoviedb.org/3';
 
-<body>
+export default function NeIzlesen() {
+  const [items, setItems] = useState([]);
+  const [selectedContent, setSelectedContent] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
 
-<header>
-  <h1>🎬 Ne İzlesen</h1>
-  <div class="topbar">
-    <input id="search" placeholder="Ara">
-    <span id="user"></span>
-    <button onclick="logout()">Çıkış</button>
-  </div>
-</header>
+  // Veri Çekme (Trendler veya Arama)
+  useEffect(() => {
+    const fetchContent = async () => {
+      setLoading(true);
+      const endpoint = searchQuery 
+        ? `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${searchQuery}&language=tr-TR`
+        : `${BASE_URL}/trending/all/day?api_key=${API_KEY}&language=tr-TR`;
+      
+      const res = await fetch(endpoint);
+      const data = await res.json();
+      setItems(data.results || []);
+      setLoading(false);
+    };
 
-<div id="app"></div>
+    const timeoutId = setTimeout(fetchContent, 500); // Debounce search
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
-<dialog id="modal">
-  <div class="modal" id="modalContent"></div>
-</dialog>
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 font-sans selection:bg-red-600">
+      {/* HEADER */}
+      <header className="sticky top-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-zinc-800 p-4">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <h1 className="text-2xl font-black tracking-tighter text-red-600 italic">NE İZLESEN</h1>
+          <input 
+            type="text" 
+            placeholder="Film veya dizi ara..." 
+            className="w-full md:w-96 bg-zinc-900 border border-zinc-700 rounded-full px-6 py-2 focus:outline-none focus:border-red-600 transition-all text-sm"
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+      </header>
 
-<script>
-const API="https://api.themoviedb.org/3";
-const KEY="4b19cfb150897a9071d51539b2ffc42f";
-const IMG="https://image.tmdb.org/t/p/w500";
+      {/* MAIN CONTENT */}
+      <main className="max-w-7xl mx-auto p-6">
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {items.map((item) => (
+              <div 
+                key={item.id} 
+                onClick={() => setSelectedContent(item)}
+                className="group cursor-pointer bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 hover:border-red-600 transition-all shadow-lg"
+              >
+                <div className="relative aspect-[2/3]">
+                  <img 
+                    src={item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : 'https://via.placeholder.com/500x750?text=No+Image'} 
+                    alt={item.title || item.name}
+                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                    <span className="bg-red-600 text-white px-4 py-2 rounded-full font-bold text-xs">ŞİMDİ İZLE</span>
+                  </div>
+                </div>
+                <div className="p-3">
+                  <h3 className="text-sm font-bold truncate">{item.title || item.name}</h3>
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-[10px] text-zinc-500 uppercase tracking-widest">{item.media_type === 'tv' ? 'Dizi' : 'Film'}</span>
+                    <span className="text-[10px] text-yellow-500 font-bold">★ {item.vote_average?.toFixed(1)}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
 
-const app=document.getElementById("app");
-const modal=document.getElementById("modal");
-const modalContent=document.getElementById("modalContent");
-const userSpan=document.getElementById("user");
-const search=document.getElementById("search");
+      {/* PLAYER MODAL (Overlay) */}
+      {selectedContent && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 animate-in fade-in duration-300">
+          <div className="relative w-full max-w-5xl bg-zinc-900 rounded-3xl overflow-hidden shadow-2xl border border-zinc-800">
+            {/* Close Button */}
+            <button 
+              onClick={() => setSelectedContent(null)}
+              className="absolute top-4 right-4 z-[110] bg-black/50 hover:bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+            >
+              ✕
+            </button>
 
-function save(key,val){localStorage.setItem(key,JSON.stringify(val))}
-function load(key){return JSON.parse(localStorage.getItem(key)||"[]")}
+            {/* Video Player Section */}
+            <div className="relative pt-[56.25%] bg-black">
+              <iframe 
+                src={selectedContent.media_type === 'movie' || !selectedContent.media_type
+                  ? `https://vidlink.pro/movie/${selectedContent.id}`
+                  : `https://vidlink.pro/tv/${selectedContent.id}/1/1`
+                }
+                className="absolute top-0 left-0 w-full h-full"
+                frameBorder="0" 
+                allowFullScreen 
+              />
+            </div>
 
-function login(){
-  let u=localStorage.getItem("user");
-  if(!u){
-    u=prompt("Profil adı:");
-    localStorage.setItem("user",u);
-  }
-  userSpan.textContent="👤 "+u;
-}
-function logout(){
-  localStorage.removeItem("user");
-  location.reload();
-}
+            {/* Info Section */}
+            <div className="p-8">
+              <h2 className="text-3xl font-black mb-2">{selectedContent.title || selectedContent.name}</h2>
+              <div className="flex gap-4 text-xs text-zinc-400 mb-4 font-bold uppercase tracking-widest">
+                <span className="text-red-500">{selectedContent.release_date || selectedContent.first_air_date}</span>
+                <span>TMDB ID: {selectedContent.id}</span>
+              </div>
+              <p className="text-zinc-400 leading-relaxed max-w-3xl">
+                {selectedContent.overview || "Bu içerik için henüz bir özet eklenmemiş."}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
-function favs(){return load("favs")}
-function addFav(x){
-  let f=favs();
-  if(!f.find(i=>i.id==x.id)){
-    f.push(x);
-    save("favs",f);
-  }
-}
-
-function cont(){return load("continue")}
-function addContinue(x){
-  let c=cont();
-  c=c.filter(i=>i.id!=x.id);
-  c.unshift(x);
-  save("continue",c.slice(0,20));
-}
-
-async function tmdb(url){
-  const r=await fetch(url);
-  return await r.json();
-}
-
-function card(x){
-  const title=x.title||x.name;
-  return `
-  <div class="card" onclick="openItem(${x.id},'${x.media_type}')">
-    <img src="${IMG+x.poster_path}">
-    <div class="t">${title}</div>
-  </div>`;
-}
-
-function row(title,list){
-  return `
-  <div class="row">
-    <h2>${title}</h2>
-    <div class="scroller">
-      ${list.map(card).join("")}
+      {/* FOOTER */}
+      <footer className="p-10 text-center text-zinc-600 text-xs border-t border-zinc-900 mt-20">
+        &copy; 2026 NE İZLESEN - Cinemacity Konsept Tasarımı
+      </footer>
     </div>
-  </div>`;
+  );
 }
-
-async function loadHome(){
-  const trend=await tmdb(`${API}/trending/all/week?api_key=${KEY}&language=tr`);
-  const topTR=await tmdb(`${API}/discover/movie?api_key=${KEY}&region=TR&sort_by=popularity.desc`);
-
-  let html="";
-  const c=cont();
-  const f=favs();
-
-  if(c.length) html+=row("İzlemeye Devam Et",c);
-  if(f.length) html+=row("Favorilerim",f);
-
-  html+=row("Top10 Türkiye",topTR.results.slice(0,10));
-  html+=row("Trend",trend.results);
-
-  app.innerHTML=html;
-}
-
-async function openItem(id,type){
-  const d=await tmdb(`${API}/${type}/${id}?api_key=${KEY}&language=tr`);
-  const title=d.title||d.name;
-  const poster=d.poster_path?IMG+d.poster_path:"";
-
-  modalContent.innerHTML=`
-    <img src="${poster}">
-    <div>
-      <h2>${title}</h2>
-      <p>${d.overview||""}</p>
-
-      <button onclick='play(${id},"${type}")'>▶ İzle</button>
-      <button onclick='fav(${id},"${type}")'>❤ Favori</button>
-
-      <iframe id="player"></iframe>
-    </div>
-  `;
-  modal.showModal();
-}
-
-function fav(id,type){
-  addFav({id,media_type:type});
-  alert("Favorilere eklendi");
-}
-
-function play(id,type){
-  const p=document.getElementById("player");
-  if(type==="movie"){
-    p.src=`https://vidlink.pro/movie/${id}`;
-  }else{
-    p.src=`https://vidlink.pro/tv/${id}/1/1`;
-  }
-  addContinue({id,media_type:type});
-}
-
-search.oninput=async()=>{
-  const q=search.value.trim();
-  if(!q){loadHome();return;}
-  const r=await tmdb(`${API}/search/multi?api_key=${KEY}&query=${q}&language=tr`);
-  app.innerHTML=row("Sonuçlar",r.results.filter(x=>x.media_type!="person"));
-}
-
-login();
-loadHome();
-</script>
-
-</body>
-</html>
