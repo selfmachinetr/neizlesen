@@ -9,94 +9,47 @@
 :root{
   --bg:#0b0f17;
   --panel:#111827;
-  --accent:#7c5cff;
+  --accent:#e50914;
   --text:#e5e7eb;
   --muted:#9ca3af;
 }
-body{
-  margin:0;
-  font-family:system-ui,Segoe UI,Roboto;
-  background:var(--bg);
-  color:var(--text);
-}
+body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
 header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:16px 24px;
-  border-bottom:1px solid #1f2937;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 24px;border-bottom:1px solid #1f2937
 }
 h1{margin:0;font-size:20px}
-input{
-  background:#020617;
-  border:1px solid #1f2937;
-  color:white;
-  padding:10px 12px;
-  border-radius:8px;
-  width:260px;
-}
-.grid{
-  padding:20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
-  gap:14px;
+.row{margin:18px 0}
+.row h2{margin:0 0 8px 16px;font-size:16px}
+.scroller{
+  display:flex;gap:10px;overflow-x:auto;padding:0 16px 10px
 }
 .card{
-  background:var(--panel);
-  border-radius:12px;
-  overflow:hidden;
-  cursor:pointer;
-  border:1px solid #1f2937;
+  min-width:150px;background:var(--panel);
+  border-radius:8px;overflow:hidden;cursor:pointer;
+  border:1px solid #1f2937
 }
-.card img{
-  width:100%;
-  aspect-ratio:2/3;
-  object-fit:cover;
-}
-.title{
-  padding:8px;
-  font-size:13px;
-}
+.card img{width:100%;aspect-ratio:2/3;object-fit:cover}
+.card .t{padding:6px;font-size:12px}
 dialog{
-  border:0;
-  width:min(1000px,95vw);
-  background:#020617;
-  color:white;
-  border-radius:12px;
+  border:0;width:min(1000px,95vw);background:#020617;
+  color:white;border-radius:12px
 }
-.modal{
-  display:grid;
-  grid-template-columns:260px 1fr;
-  gap:16px;
-  padding:16px;
-}
+.modal{display:grid;grid-template-columns:260px 1fr;gap:16px;padding:16px}
 .modal img{width:100%;border-radius:10px}
-iframe{
-  width:100%;
-  aspect-ratio:16/9;
-  border:0;
-  border-radius:10px;
-}
-select{
-  background:#020617;
-  border:1px solid #1f2937;
-  color:white;
-  padding:6px;
-  border-radius:6px;
-}
+iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:10px}
 button{
-  background:var(--accent);
-  border:0;
-  padding:8px 12px;
-  border-radius:8px;
-  color:white;
-  cursor:pointer;
+  background:var(--accent);border:0;padding:8px 12px;
+  border-radius:6px;color:white;cursor:pointer
 }
-.close{
-  position:absolute;
-  right:12px;
-  top:12px;
-  background:#111827;
+.topbar{display:flex;gap:10px;align-items:center}
+input{
+  background:#020617;border:1px solid #1f2937;color:white;
+  padding:8px;border-radius:6px
+}
+.badge{
+  background:#111827;border:1px solid #1f2937;
+  padding:4px 6px;border-radius:6px;font-size:12px
 }
 </style>
 </head>
@@ -105,13 +58,16 @@ button{
 
 <header>
   <h1>🎬 Ne İzlesen</h1>
-  <input id="search" placeholder="Film veya dizi ara">
+  <div class="topbar">
+    <input id="search" placeholder="Ara">
+    <span id="user"></span>
+    <button onclick="logout()">Çıkış</button>
+  </div>
 </header>
 
-<div class="grid" id="grid"></div>
+<div id="app"></div>
 
 <dialog id="modal">
-  <button class="close" onclick="modal.close()">✕</button>
   <div class="modal" id="modalContent"></div>
 </dialog>
 
@@ -120,104 +76,130 @@ const API="https://api.themoviedb.org/3";
 const KEY="4b19cfb150897a9071d51539b2ffc42f";
 const IMG="https://image.tmdb.org/t/p/w500";
 
-const grid=document.getElementById("grid");
+const app=document.getElementById("app");
 const modal=document.getElementById("modal");
 const modalContent=document.getElementById("modalContent");
+const userSpan=document.getElementById("user");
 const search=document.getElementById("search");
 
-async function fetchTrending(){
-  const r=await fetch(`${API}/trending/all/week?api_key=${KEY}&language=tr`);
-  const j=await r.json();
-  render(j.results);
+function save(key,val){localStorage.setItem(key,JSON.stringify(val))}
+function load(key){return JSON.parse(localStorage.getItem(key)||"[]")}
+
+function login(){
+  let u=localStorage.getItem("user");
+  if(!u){
+    u=prompt("Profil adı:");
+    localStorage.setItem("user",u);
+  }
+  userSpan.textContent="👤 "+u;
+}
+function logout(){
+  localStorage.removeItem("user");
+  location.reload();
 }
 
-function render(list){
-  grid.innerHTML=list.map(x=>{
-    const title=x.title||x.name;
-    const poster=x.poster_path?IMG+x.poster_path:"";
-    return `
-    <div class="card" onclick="openDetails(${x.id},'${x.media_type}')">
-      <img src="${poster}">
-      <div class="title">${title}</div>
-    </div>`;
-  }).join("");
+function favs(){return load("favs")}
+function addFav(x){
+  let f=favs();
+  if(!f.find(i=>i.id==x.id)){
+    f.push(x);
+    save("favs",f);
+  }
 }
 
-async function openDetails(id,type){
-  const r=await fetch(`${API}/${type}/${id}?api_key=${KEY}&language=tr`);
-  const d=await r.json();
+function cont(){return load("continue")}
+function addContinue(x){
+  let c=cont();
+  c=c.filter(i=>i.id!=x.id);
+  c.unshift(x);
+  save("continue",c.slice(0,20));
+}
 
+async function tmdb(url){
+  const r=await fetch(url);
+  return await r.json();
+}
+
+function card(x){
+  const title=x.title||x.name;
+  return `
+  <div class="card" onclick="openItem(${x.id},'${x.media_type}')">
+    <img src="${IMG+x.poster_path}">
+    <div class="t">${title}</div>
+  </div>`;
+}
+
+function row(title,list){
+  return `
+  <div class="row">
+    <h2>${title}</h2>
+    <div class="scroller">
+      ${list.map(card).join("")}
+    </div>
+  </div>`;
+}
+
+async function loadHome(){
+  const trend=await tmdb(`${API}/trending/all/week?api_key=${KEY}&language=tr`);
+  const topTR=await tmdb(`${API}/discover/movie?api_key=${KEY}&region=TR&sort_by=popularity.desc`);
+
+  let html="";
+  const c=cont();
+  const f=favs();
+
+  if(c.length) html+=row("İzlemeye Devam Et",c);
+  if(f.length) html+=row("Favorilerim",f);
+
+  html+=row("Top10 Türkiye",topTR.results.slice(0,10));
+  html+=row("Trend",trend.results);
+
+  app.innerHTML=html;
+}
+
+async function openItem(id,type){
+  const d=await tmdb(`${API}/${type}/${id}?api_key=${KEY}&language=tr`);
   const title=d.title||d.name;
   const poster=d.poster_path?IMG+d.poster_path:"";
-  const overview=d.overview||"Açıklama yok";
 
-  if(type==="movie"){
-    modalContent.innerHTML=`
-      <img src="${poster}">
-      <div>
-        <h2>${title}</h2>
-        <p>${overview}</p>
-        <iframe src="https://vidlink.pro/movie/${id}" allowfullscreen></iframe>
-      </div>
-    `;
-  }else{
-    modalContent.innerHTML=`
-      <img src="${poster}">
-      <div>
-        <h2>${title}</h2>
-        <p>${overview}</p>
+  modalContent.innerHTML=`
+    <img src="${poster}">
+    <div>
+      <h2>${title}</h2>
+      <p>${d.overview||""}</p>
 
-        <div>
-          Sezon:
-          <select id="season"></select>
-          Bölüm:
-          <select id="episode"></select>
-          <button onclick="loadEpisode(${id})">İzle</button>
-        </div>
+      <button onclick='play(${id},"${type}")'>▶ İzle</button>
+      <button onclick='fav(${id},"${type}")'>❤ Favori</button>
 
-        <iframe id="player"></iframe>
-      </div>
-    `;
-
-    const seasonSel=document.getElementById("season");
-    const epSel=document.getElementById("episode");
-
-    d.seasons.filter(s=>s.season_number>0).forEach(s=>{
-      seasonSel.innerHTML+=`<option value="${s.season_number}">${s.season_number}</option>`;
-    });
-
-    seasonSel.onchange=()=>loadEpisodes(id,seasonSel.value);
-    loadEpisodes(id,seasonSel.value||1);
-  }
-
+      <iframe id="player"></iframe>
+    </div>
+  `;
   modal.showModal();
 }
 
-async function loadEpisodes(id,season){
-  const epSel=document.getElementById("episode");
-  const r=await fetch(`${API}/tv/${id}/season/${season}?api_key=${KEY}&language=tr`);
-  const d=await r.json();
-  epSel.innerHTML="";
-  d.episodes.forEach(e=>{
-    epSel.innerHTML+=`<option value="${e.episode_number}">${e.episode_number}</option>`;
-  });
+function fav(id,type){
+  addFav({id,media_type:type});
+  alert("Favorilere eklendi");
 }
 
-function loadEpisode(id){
-  const s=document.getElementById("season").value;
-  const e=document.getElementById("episode").value;
-  document.getElementById("player").src=`https://vidlink.pro/tv/${id}/${s}/${e}`;
+function play(id,type){
+  const p=document.getElementById("player");
+  if(type==="movie"){
+    p.src=`https://vidlink.pro/movie/${id}`;
+  }else{
+    p.src=`https://vidlink.pro/tv/${id}/1/1`;
+  }
+  addContinue({id,media_type:type});
 }
 
 search.oninput=async()=>{
   const q=search.value.trim();
-  if(!q){fetchTrending();return;}
-  const r=await fetch(`${API}/search/multi?api_key=${KEY}&query=${q}&language=tr`);
-  const j=await r.json();
-  render(j.results.filter(x=>x.media_type!=="person"));
-};
+  if(!q){loadHome();return;}
+  const r=await tmdb(`${API}/search/multi?api_key=${KEY}&query=${q}&language=tr`);
+  app.innerHTML=row("Sonuçlar",r.results.filter(x=>x.media_type!="person"));
+}
 
-fetchTrending();
+login();
+loadHome();
 </script>
 
 </body>
