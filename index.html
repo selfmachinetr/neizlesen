@@ -101,6 +101,7 @@ nav.scrolled { background: rgba(7,9,14,0.96); backdrop-filter: blur(24px); borde
 .sug-info .sug-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .sug-type { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 600; letter-spacing: 1px; margin-left: auto; flex-shrink: 0; }
 .sug-type.film { background: rgba(232,25,44,0.10); color: var(--accent); }
+.sug-type.oyuncu { background: rgba(61,155,255,0.12); color: #3d9bff; }
 .sug-type.dizi { background: rgba(61,155,255,0.12); color: var(--accent3); }
 
 /* AUTH */
@@ -686,7 +687,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 
 
 
-.site-footer { background:var(--surface); border-top:1px solid var(--border); padding:52px 64px; display:grid; grid-template-columns:2.2fr 1fr 1fr 1fr 1fr; gap:48px; margin-top:32px; }
+.site-footer { background:var(--surface); border-top:1px solid var(--border); padding:52px 64px; display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr 1.1fr; gap:48px; margin-top:32px; }
 .footer-brand { display:flex; flex-direction:column; gap:16px; }
 .footer-logo { font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:3px; color:var(--accent); }
 .footer-logo span { color:var(--text); }
@@ -732,6 +733,29 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 .cw-ep-badge { position: absolute; top: 7px; left: 7px; background: rgba(10,10,15,.88); color: #fff; font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 4px; letter-spacing: .5px; backdrop-filter: blur(6px); }
 .cw-title { font-size: 12px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
 .cw-pct { font-size: 11px; color: var(--accent); font-weight: 600; }
+
+/* ===== FOOTER DOWNLOAD BUTTON ===== */
+.footer-download-wrap { display: flex; flex-direction: column; gap: 10px; }
+.footer-dl-btn { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: var(--text); transition: all .22s; cursor: none; }
+.footer-dl-btn:hover { border-color: rgba(232,25,44,.45); background: rgba(232,25,44,.07); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,25,44,.15); }
+.footer-dl-icon { width: 36px; height: 36px; background: rgba(232,25,44,.12); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
+.footer-dl-info { display: flex; flex-direction: column; gap: 2px; }
+.footer-dl-label { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: .3px; }
+.footer-dl-sub { font-size: 10px; color: var(--muted); letter-spacing: .5px; }
+.footer-dl-note { font-size: 10px; color: var(--muted); margin: 0; padding: 0 2px; }
+
+/* ===== KVKK ÇEREZ BİLDİRİMİ ===== */
+.cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(16,16,24,0.97); backdrop-filter: blur(16px); border-top: 1px solid var(--border); padding: 16px 48px; display: flex; align-items: center; justify-content: space-between; gap: 24px; z-index: 8888; transform: translateY(0); transition: transform .4s cubic-bezier(.4,0,.2,1); }
+.cookie-banner.hidden { transform: translateY(110%); }
+.cookie-text { font-size: 13px; color: rgba(232,234,240,.7); line-height: 1.6; max-width: 700px; }
+.cookie-text a { color: var(--accent); text-decoration: none; }
+.cookie-text a:hover { text-decoration: underline; }
+.cookie-btns { display: flex; gap: 10px; flex-shrink: 0; }
+.cookie-accept { background: var(--accent); color: #fff; border: none; padding: 9px 22px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: none; transition: background .2s; letter-spacing: .3px; }
+.cookie-accept:hover { background: var(--accent-hover); }
+.cookie-decline { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 9px 16px; border-radius: 8px; font-size: 13px; cursor: none; transition: all .2s; }
+.cookie-decline:hover { border-color: rgba(255,255,255,.2); color: var(--text); }
+@media(max-width:640px){ .cookie-banner { flex-direction: column; align-items: flex-start; padding: 16px; } .cookie-btns { width: 100%; } .cookie-accept, .cookie-decline { flex: 1; text-align: center; } }
 </style>
 </head>
 <body>
@@ -744,6 +768,21 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- KVKK ÇEREZ BİLDİRİMİ -->
+<div class="cookie-banner" id="cookieBanner">
+  <p class="cookie-text">
+    Bu site, deneyiminizi geliştirmek için çerezler ve yerel depolama (localStorage) kullanmaktadır. 
+    İzleme geçmişiniz ve listeniz yalnızca cihazınızda saklanır, sunucuya gönderilmez. 
+    Devam ederek <a href="#" onclick="navigate('dmca');return false">Kullanım Şartları</a>'nı kabul etmiş sayılırsınız.
+  </p>
+  <div class="cookie-btns">
+    <button class="cookie-decline" onclick="closeCookieBanner(false)">Reddet</button>
+    <button class="cookie-accept" onclick="closeCookieBanner(true)">Kabul Et</button>
+  </div>
+</div>
+
+
+
 <!-- NAV -->
 <nav id="nav">
   <a class="logo" href="#" onclick="navigate('home');return false">NE <span>İZLESEN</span></a>
@@ -752,6 +791,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
     <li><a href="#" id="nav-movies" onclick="navigate('movies');return false">Filmler</a></li>
     <li><a href="#" id="nav-series" onclick="navigate('series');return false">Diziler</a></li>
     <li><a href="#" id="nav-new" onclick="navigate('new');return false">Yeni Eklenenler</a></li>
+    <li><a href="#" id="nav-upcoming" onclick="navigate('upcoming');return false">Yakında</a></li>
     <li><a href="#" id="nav-calendar" onclick="navigate('calendar');return false">Takvim</a></li>
     <li><a href="#" id="nav-list" onclick="navigate('mylist');return false">Listelerim</a></li>
   </ul>
@@ -792,6 +832,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 <div class="page" id="page-search"></div>
 <div class="page" id="page-profile"></div>
 <div class="page" id="page-calendar"></div>
+<div class="page" id="page-upcoming"></div>
 <div class="page" id="page-person"></div>
 <div class="page" id="page-404"></div>
 <div class="page" id="page-dmca"></div>
@@ -810,6 +851,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
     <a href="#" onclick="navigate('movies');closeMobileMenu();return false">🎬 Filmler</a>
     <a href="#" onclick="navigate('series');closeMobileMenu();return false">📺 Diziler</a>
     <a href="#" onclick="navigate('new');closeMobileMenu();return false">✨ Yeni Eklenenler</a>
+    <a href="#" onclick="navigate('upcoming');closeMobileMenu();return false">🎬 Yakında Geliyor</a>
     <a href="#" onclick="navigate('calendar');closeMobileMenu();return false">📅 Dizi Takvimi</a>
     <a href="#" onclick="navigate('mylist');closeMobileMenu();return false">❤️ Listelerim</a>
     <a href="#" onclick="navigate('profile');closeMobileMenu();return false" id="mm-profile-link">👤 Profil</a>
@@ -917,11 +959,18 @@ let isDark = localStorage.getItem('cm_theme') !== 'light';
 // ─────────────────────────────────────────────
 // API HELPER
 // ─────────────────────────────────────────────
+// API cache — session boyunca aynı istekler tekrar atılmaz
+const _apiCache = new Map();
+
 async function api(path, params = {}) {
   const p = new URLSearchParams({ api_key: API_KEY, language: 'tr-TR', ...params });
-  const r = await fetch(`${BASE}${path}?${p}`);
-  if (!r.ok) throw new Error('API error');
-  return r.json();
+  const url = `${BASE}${path}?${p}`;
+  if (_apiCache.has(url)) return _apiCache.get(url);
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('API error ' + r.status);
+  const data = await r.json();
+  _apiCache.set(url, data);
+  return data;
 }
 
 // ─────────────────────────────────────────────
@@ -1276,9 +1325,28 @@ async function renderHomePage() {
           <li><a href="#">Çerez Politikası</a></li>
         </ul>
       </div>
+
+      <!-- İndir -->
+      <div class="footer-col">
+        <h4 class="footer-col-title">Uygulamalar</h4>
+        <div class="footer-download-wrap">
+          <a href="/neizlesen-tv.apk" class="footer-dl-btn" download>
+            <div class="footer-dl-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+              </svg>
+            </div>
+            <div class="footer-dl-info">
+              <span class="footer-dl-label">Android TV</span>
+              <span class="footer-dl-sub">APK İndir · v1.0</span>
+            </div>
+          </a>
+          <p class="footer-dl-note">🔒 Reklamsız · Ücretsiz · TV optimize</p>
+        </div>
+      </div>
     </footer>
     <div class="footer-bottom">
-      <span>© 2025 Ne İzlesen. Tüm hakları saklıdır.</span>
+      <span>© 2026 Ne İzlesen. Tüm hakları saklıdır.</span>
       <span>Türkiye 🇹🇷</span>
     </div>
   `;
@@ -2345,6 +2413,7 @@ async function renderSearchPage(query) {
       <button class="sf-btn active" id="sf-all" onclick="sfFilter('all',this,'${esc(query)}')">Tümü</button>
       <button class="sf-btn" id="sf-movie" onclick="sfFilter('movie',this,'${esc(query)}')">Filmler</button>
       <button class="sf-btn" id="sf-tv" onclick="sfFilter('tv',this,'${esc(query)}')">Diziler</button>
+      <button class="sf-btn" id="sf-person" onclick="sfFilter('person',this,'${esc(query)}')">Oyuncular</button>
     </div>
     <div class="browse-content">
       <div class="film-grid" id="searchGrid"></div>
@@ -2360,14 +2429,58 @@ window.sfFilter = async function(type, btn, query) {
   if (!grid) return;
   grid.innerHTML = Array(12).fill(`<div class="skeleton" style="aspect-ratio:2/3;border-radius:12px"></div>`).join('');
   try {
+    // OYUNCU arama
+    if (type === 'person') {
+      const d = await api('/search/person', { query, page: 1 });
+      const people = (d.results || []).filter(p => p.profile_path).slice(0, 20);
+      if (sub) sub.textContent = people.length ? `${people.length} kişi bulundu` : 'Sonuç bulunamadı';
+      grid.innerHTML = people.length
+        ? people.map(p => `
+            <div class="film-card" onclick="navigate('person',{id:${p.id}})">
+              <div class="fc-wrap">
+                <img class="fc-img" src="${IMG_W}${p.profile_path}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.background='var(--card2)';this.removeAttribute('src')">
+                <div class="fc-badge" style="background:rgba(61,155,255,.18);border-color:rgba(61,155,255,.35);color:#3d9bff">OYUNCU</div>
+                <div class="fc-overlay"><div class="fc-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#07090e"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+              </div>
+              <div class="fc-info">
+                <div class="fc-title">${esc(p.name)}</div>
+                <div class="fc-meta"><span>${esc(p.known_for_department || 'Oyuncu')}</span></div>
+              </div>
+            </div>`).join('')
+        : `<div style="grid-column:1/-1;text-align:center;padding:80px 20px"><div style="font-size:48px;margin-bottom:16px">🎭</div><div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px">"${esc(query)}" adında oyuncu bulunamadı</div></div>`;
+      return;
+    }
+
     let results = [];
     if (type === 'all') {
       const d = await api('/search/multi', { query, page: 1 });
-      results = d.results.filter(r => r.media_type !== 'person');
-    } else {
-      const d = await api('/search/' + type, { query, page: 1 });
-      results = d.results.map(r => ({ ...r, media_type: type }));
+      // "Tümü" sekmesinde oyuncuları da göster ama ayrı bir blokta
+      const media = d.results.filter(r => r.media_type !== 'person' && (r.poster_path || r.backdrop_path));
+      const persons = d.results.filter(r => r.media_type === 'person' && r.profile_path).slice(0, 4);
+      if (sub) sub.textContent = (media.length + persons.length) ? `${media.length + persons.length} sonuç bulundu` : 'Sonuç bulunamadı';
+      grid.innerHTML = [
+        ...persons.map(p => `
+          <div class="film-card" onclick="navigate('person',{id:${p.id}})">
+            <div class="fc-wrap">
+              <img class="fc-img" src="${IMG_W}${p.profile_path}" alt="${esc(p.name)}" loading="lazy" onerror="this.style.background='var(--card2)';this.removeAttribute('src')">
+              <div class="fc-badge" style="background:rgba(61,155,255,.18);border-color:rgba(61,155,255,.35);color:#3d9bff">OYUNCU</div>
+              <div class="fc-overlay"><div class="fc-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#07090e"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+            </div>
+            <div class="fc-info"><div class="fc-title">${esc(p.name)}</div><div class="fc-meta"><span>${esc(p.known_for_department||'Oyuncu')}</span></div></div>
+          </div>`),
+        ...media.map(m => filmCardHtml(m, m.media_type === 'tv' ? 'tv' : 'movie'))
+      ].join('') || `<div style="grid-column:1/-1;text-align:center;padding:80px 20px">
+           <div style="font-size:48px;margin-bottom:16px">🎬</div>
+           <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:12px">"${esc(query)}" İÇİN SONUÇ BULUNAMADI</div>
+           <p style="color:var(--muted);font-size:14px;margin-bottom:24px">Farklı bir arama terimi deneyin veya kategorilere göz atın.</p>
+           <button class="btn-sm" onclick="navigate('movies')">Filmlere Göz At</button>
+           <button class="btn-sm" onclick="navigate('series')" style="margin-left:10px">Dizilere Göz At</button>
+         </div>`;
+      return;
     }
+
+    const d = await api('/search/' + type, { query, page: 1 });
+    results = d.results.map(r => ({ ...r, media_type: type }));
     const filtered = results.filter(r => r.poster_path || r.backdrop_path);
     if (sub) sub.textContent = filtered.length ? `${filtered.length} sonuç bulundu` : 'Sonuç bulunamadı';
     grid.innerHTML = filtered.length
@@ -2634,8 +2747,7 @@ function render404() {
 const TR_MONTHS = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
 
 async function renderUpcomingPage() {
-  showPage('calendar');
-  const el = document.getElementById('page-calendar');
+  const el = document.getElementById('page-upcoming');
   if (!el) return;
   el.innerHTML = `
     <div class="browse-header">
@@ -2977,15 +3089,6 @@ window.toggleWatchlist = function(id, mediaType, title, poster) {
 // ─────────────────────────────────────────────
 function renderMyList() {
   const el = document.getElementById('page-mylist');
-  if (!currentUser) {
-    el.innerHTML = `<div style="padding:140px 48px;text-align:center">
-      <div style="font-size:60px;margin-bottom:20px">🎬</div>
-      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;margin-bottom:12px">LİSTENİ OLUŞTUR</h2>
-      <p style="color:var(--muted);margin-bottom:28px">İzlemek istediğin içerikleri kaydetmek için giriş yap.</p>
-      <button class="btn-primary" style="font-size:15px;padding:12px 28px" onclick="openAuth('login')">Giriş Yap</button>
-    </div>`;
-    return;
-  }
   if (watchlist.length === 0) {
     el.innerHTML = `<div style="padding:140px 48px;text-align:center">
       <div style="font-size:60px;margin-bottom:20px">📋</div>
@@ -3141,7 +3244,10 @@ async function doSearch(q) {
   drop.style.display = 'block';
   try {
     const d = await api('/search/multi', { query: q, page: 1 });
-    const items = d.results.filter(x => x.media_type !== 'person' && (x.poster_path || x.backdrop_path)).slice(0, 8);
+    // Önce film/dizi, ardından oyuncu (en fazla 2 kişi)
+    const mediaItems = d.results.filter(x => x.media_type !== 'person' && (x.poster_path || x.backdrop_path)).slice(0, 6);
+    const personItems = d.results.filter(x => x.media_type === 'person' && x.profile_path).slice(0, 2);
+    const items = [...mediaItems, ...personItems];
     if (!items.length) {
       sugList.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:13px">Sonuç bulunamadı.</div>';
       return;
@@ -3149,11 +3255,13 @@ async function doSearch(q) {
     sugList.innerHTML = items.map(m => {
       const title = m.title || m.name || '';
       const year = (m.release_date || m.first_air_date || '').slice(0, 4);
-      const type = m.media_type === 'tv' ? 'tv' : 'movie';
-      const typeLabel = type === 'tv' ? 'DİZİ' : 'FİLM';
-      const typeCls = type === 'tv' ? 'dizi' : 'film';
+      const isPerson = m.media_type === 'person';
+      const type = isPerson ? 'person' : (m.media_type === 'tv' ? 'tv' : 'movie');
+      const typeLabel = isPerson ? 'OYUNCU' : (type === 'tv' ? 'DİZİ' : 'FİLM');
+      const typeCls = isPerson ? 'oyuncu' : (type === 'tv' ? 'dizi' : 'film');
+      const poster = isPerson ? m.profile_path : m.poster_path;
       return `<div class="sug-item" data-id="${m.id}" data-type="${type}">
-        <img class="sug-poster" src="${m.poster_path ? IMG_W + m.poster_path : ''}" alt="" onerror="this.style.display='none'">
+        <img class="sug-poster" src="${poster ? IMG_W + poster : ''}" alt="" onerror="this.style.display='none'">
         <div class="sug-info">
           <div class="sug-title">${esc(title)}</div>
           <div class="sug-meta">${year}</div>
@@ -3170,7 +3278,8 @@ async function doSearch(q) {
         drop.style.display = 'none';
         document.getElementById('searchInput').value = '';
         document.getElementById('searchInput').blur();
-        navigate('detail', { id, mediaType: type });
+        if (type === 'person') navigate('person', { id });
+        else navigate('detail', { id, mediaType: type });
       });
     });
 
@@ -3178,6 +3287,29 @@ async function doSearch(q) {
     sugList.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:13px">Hata oluştu.</div>';
   }
 }
+
+
+// ─────────────────────────────────────────────
+// KVKK ÇEREZ BİLDİRİMİ
+// ─────────────────────────────────────────────
+(function initCookieBanner() {
+  const consent = localStorage.getItem('cm_cookie_consent');
+  if (consent) return; // Zaten yanıtlanmış
+  setTimeout(() => {
+    const b = document.getElementById('cookieBanner');
+    if (b) b.classList.remove('hidden') || true; // banner zaten görünür
+  }, 1200); // 1.2sn sonra göster
+})();
+
+window.closeCookieBanner = function(accepted) {
+  const b = document.getElementById('cookieBanner');
+  if (b) b.classList.add('hidden');
+  localStorage.setItem('cm_cookie_consent', accepted ? 'accepted' : 'declined');
+  if (!accepted) {
+    // Reddet seçildiyse zorunlu olmayanları temizle
+    // (izleme geçmişi gibi) — isteğe bağlı, burada sadece consent kaydediyoruz
+  }
+};
 
 // ─────────────────────────────────────────────
 // AUTH
