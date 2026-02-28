@@ -35,18 +35,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #07090e;
-  --surface: #0d1017;
-  --card: #111520;
-  --card2: #161b26;
-  --border: rgba(255,255,255,0.065);
-  --accent: #e8c840;
-  --accent2: #ff4f4f;
+  --bg: #0b0b0f;
+  --surface: #111118;
+  --card: #16161f;
+  --card2: #1c1c28;
+  --border: rgba(255,255,255,0.07);
+  --accent: #e8192c;
+  --accent-hover: #ff2d42;
+  --accent2: #ff6b35;
   --accent3: #3d9bff;
+  --gold: #f5c518;
+  --green: #1db954;
   --text: #e8eaf0;
-  --muted: #6b7280;
-  --nav-h: 68px;
-  --radius: 12px;
+  --muted: #707585;
+  --nav-h: 60px;
+  --radius: 8px;
+  --sidebar-w: 260px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -56,12 +60,12 @@ body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-s
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(232,200,64,0.4); }
+::-webkit-scrollbar-thumb:hover { background: rgba(232,25,44,0.5); }
 
 /* CURSOR */
-.cursor-dot { position: fixed; top: 0; left: 0; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 9999; }
-.cursor-ring { position: fixed; top: 0; left: 0; width: 36px; height: 36px; border: 1.5px solid rgba(232,200,64,0.45); border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 9998; transition: width .2s, height .2s, border-color .2s, opacity .2s; }
-.scroll-prog { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(to right, var(--accent), #f0a030); z-index: 10000; box-shadow: 0 0 12px var(--accent); pointer-events: none; }
+.cursor-dot { position: fixed; top: 0; left: 0; width: 7px; height: 7px; background: var(--accent); border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 9999; }
+.cursor-ring { position: fixed; top: 0; left: 0; width: 34px; height: 34px; border: 1.5px solid rgba(232,25,44,0.5); border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; z-index: 9998; transition: width .2s, height .2s, border-color .2s, opacity .2s; }
+.scroll-prog { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(to right, var(--accent), #ff6b35); z-index: 10000; box-shadow: 0 0 10px rgba(232,25,44,0.7); pointer-events: none; }
 
 /* NAV */
 nav {
@@ -72,8 +76,8 @@ nav {
   z-index: 500; transition: background .3s, border-color .3s;
 }
 nav.scrolled { background: rgba(7,9,14,0.96); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
-.logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; color: var(--accent); text-decoration: none; cursor: none; }
-.logo span { color: #fff; }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: #fff; text-decoration: none; cursor: none; display: flex; align-items: center; gap: 0; background: var(--accent); padding: 5px 12px; border-radius: 6px; }
+.logo span { color: rgba(255,255,255,0.75); margin-left:3px; font-size:19px; }
 .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
 .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 400; transition: color .2s; position: relative; cursor: none; }
 .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 1px; background: var(--accent); transform: scaleX(0); transition: transform .2s; }
@@ -162,21 +166,24 @@ nav.scrolled { background: rgba(7,9,14,0.96); backdrop-filter: blur(24px); borde
 .scroll-btn.right { right: -18px; }
 
 /* FILM CARD (horizontal) */
-.film-card { flex-shrink: 0; width: 170px; scroll-snap-align: start; border-radius: var(--radius); overflow: hidden; background: var(--card); cursor: none; transition: transform .3s cubic-bezier(.34,1.56,.64,1); position: relative; }
-.film-card:hover { transform: translateY(-8px) scale(1.03); }
+.film-card { flex-shrink: 0; width: 165px; scroll-snap-align: start; border-radius: var(--radius); overflow: hidden; background: var(--card); cursor: none; transition: transform .28s cubic-bezier(.34,1.4,.64,1); position: relative; }
+.film-card:hover { transform: translateY(-7px) scale(1.03); }
 .film-card:hover .fc-overlay { opacity: 1; }
-.film-card:hover .fc-img { transform: scale(1.06); filter: brightness(.55); }
+.film-card:hover .fc-img { transform: scale(1.07); filter: brightness(.45); }
 .fc-wrap { aspect-ratio: 2/3; overflow: hidden; position: relative; }
 .fc-img { width: 100%; height: 100%; object-fit: cover; display: block; background: var(--surface); transition: transform .4s, filter .4s; }
-.fc-overlay { position: absolute; inset: 0; background: rgba(7,9,14,0.55); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .3s; }
-.fc-play { width: 50px; height: 50px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: scale(.8); transition: transform .3s cubic-bezier(.34,1.56,.64,1); box-shadow: 0 0 28px rgba(232,200,64,0.55); }
+.fc-overlay { position: absolute; inset: 0; background: rgba(10,10,15,0.6); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .25s; }
+.fc-play { width: 48px; height: 48px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; transform: scale(.8); transition: transform .28s cubic-bezier(.34,1.4,.64,1); box-shadow: 0 0 30px rgba(232,25,44,0.6); }
 .film-card:hover .fc-play { transform: scale(1); }
-.fc-rating { position: absolute; top: 9px; right: 9px; background: rgba(7,9,14,0.82); border: 1px solid rgba(232,200,64,0.3); color: var(--accent); font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; display: flex; align-items: center; gap: 3px; backdrop-filter: blur(8px); }
-.fc-badge { position: absolute; top: 9px; left: 9px; background: rgba(232,200,64,0.16); border: 1px solid rgba(232,200,64,0.32); color: var(--accent); font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 1px; }
-.fc-new { background: rgba(255,79,79,0.16); border: 1px solid rgba(255,79,79,0.35); color: var(--accent2); }
-.fc-info { padding: 10px 12px 13px; }
-.fc-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.fc-meta { font-size: 11px; color: var(--muted); display: flex; gap: 6px; }
+.fc-rating { position: absolute; top: 8px; right: 8px; background: rgba(10,10,15,0.88); border: 1px solid rgba(245,197,24,0.35); color: var(--gold); font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 5px; display: flex; align-items: center; gap: 3px; backdrop-filter: blur(8px); letter-spacing: .3px; }
+.fc-badge { position: absolute; top: 8px; left: 8px; background: rgba(232,25,44,0.18); border: 1px solid rgba(232,25,44,0.4); color: var(--accent); font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 1px; }
+.fc-dub-badge { position: absolute; bottom: 8px; left: 8px; display: flex; gap: 4px; }
+.fc-dub { background: rgba(61,155,255,0.18); border: 1px solid rgba(61,155,255,0.4); color: #5bb8ff; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: .8px; }
+.fc-sub { background: rgba(255,107,53,0.18); border: 1px solid rgba(255,107,53,0.4); color: #ff8c5a; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: .8px; }
+.fc-info { padding: 9px 11px 12px; }
+.fc-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+.fc-meta { font-size: 11px; color: var(--muted); display: flex; gap: 5px; align-items: center; }
+.fc-imdb { font-size: 9px; font-weight: 800; background: var(--gold); color: #000; padding: 1px 5px; border-radius: 3px; letter-spacing: .5px; text-decoration: none; cursor: pointer; flex-shrink: 0; }
 
 /* GRID (full page) */
 .film-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 18px; }
@@ -648,13 +655,99 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
   .detail-body { padding: 24px 16px; }
   .info-card { padding: 16px; }
   .similar-sec { padding: 20px 16px; }
-  .site-footer { grid-template-columns: 1fr 1fr !important; gap: 24px; padding: 32px 16px; }
+  /* ─── ANA SAYFA İKİ KOLON LAYOUT ─── */
+.home-layout { display: grid; grid-template-columns: 1fr var(--sidebar-w); gap: 0; min-height: 60vh; }
+.home-main { min-width: 0; }
+.home-sidebar { background: var(--surface); border-left: 1px solid var(--border); padding: 0; position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; flex-shrink: 0; }
+.home-sidebar::-webkit-scrollbar { width: 4px; }
+.home-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius:2px; }
+
+/* Sidebar Widget */
+.sw { padding: 18px 16px; border-bottom: 1px solid var(--border); }
+.sw-title { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 2px; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.sw-title::before { content: ''; width: 3px; height: 16px; background: var(--accent); border-radius: 2px; display: block; flex-shrink: 0; }
+
+/* Sidebar: Nette İzle (platform butonları) */
+.platform-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.platform-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); font-size: 11px; font-weight: 600; padding: 8px 10px; border-radius: 6px; cursor: none; transition: all .2s; text-align: center; letter-spacing: .3px; }
+.platform-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,25,44,0.06); }
+
+/* Sidebar: Dil Filtresi */
+.lang-grid { display: flex; flex-direction: column; gap: 4px; }
+.lang-btn { display: flex; align-items: center; gap: 8px; background: none; border: none; color: var(--muted); font-size: 12px; padding: 6px 8px; border-radius: 6px; cursor: none; transition: all .18s; width: 100%; text-align: left; }
+.lang-btn:hover { background: var(--card); color: var(--text); }
+.lang-flag { font-size: 16px; width: 20px; flex-shrink: 0; }
+.lang-count { margin-left: auto; font-size: 10px; color: var(--muted); }
+
+/* Sidebar: Tür listesi */
+.genre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.genre-tag { background: var(--card); border: 1px solid var(--border); color: var(--muted); font-size: 10px; padding: 5px 8px; border-radius: 5px; cursor: none; transition: all .18s; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.genre-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,25,44,0.05); }
+
+/* Sidebar: Popüler mini liste */
+.sb-mini-list { display: flex; flex-direction: column; gap: 2px; }
+.sb-mini-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-radius: 6px; cursor: none; transition: background .15s; }
+.sb-mini-item:hover { background: var(--card); }
+.sb-mini-rank { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--muted); width: 20px; flex-shrink: 0; text-align: center; line-height: 1; }
+.sb-mini-rank.top { color: var(--accent); }
+.sb-mini-poster { width: 34px; height: 50px; border-radius: 4px; object-fit: cover; background: var(--card2); flex-shrink: 0; }
+.sb-mini-info { flex: 1; min-width: 0; }
+.sb-mini-title { font-size: 11px; color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+.sb-mini-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.sb-mini-rating { font-size: 10px; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+@media(max-width:1100px){ .home-layout { grid-template-columns: 1fr; } .home-sidebar { display:none; } }
+
+.site-footer { grid-template-columns: 1fr 1fr !important; gap: 24px; padding: 32px 16px; }
   .footer-bottom { padding: 14px 16px; }
   .footer-brand { grid-column: 1 / -1; }
   .contact-info-cards { grid-template-columns: 1fr 1fr; }
   .cf-row { grid-template-columns: 1fr; }
   .footer { grid-template-columns: 1fr 1fr; gap: 24px; padding: 32px 16px; }
 }
+/* ─── ANA SAYFA İKİ KOLON LAYOUT ─── */
+.home-layout { display: grid; grid-template-columns: 1fr var(--sidebar-w); gap: 0; min-height: 60vh; }
+.home-main { min-width: 0; }
+.home-sidebar { background: var(--surface); border-left: 1px solid var(--border); padding: 0; position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; flex-shrink: 0; }
+.home-sidebar::-webkit-scrollbar { width: 4px; }
+.home-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius:2px; }
+
+/* Sidebar Widget */
+.sw { padding: 18px 16px; border-bottom: 1px solid var(--border); }
+.sw-title { font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 2px; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.sw-title::before { content: ''; width: 3px; height: 16px; background: var(--accent); border-radius: 2px; display: block; flex-shrink: 0; }
+
+/* Sidebar: Nette İzle (platform butonları) */
+.platform-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.platform-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); font-size: 11px; font-weight: 600; padding: 8px 10px; border-radius: 6px; cursor: none; transition: all .2s; text-align: center; letter-spacing: .3px; }
+.platform-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,25,44,0.06); }
+
+/* Sidebar: Dil Filtresi */
+.lang-grid { display: flex; flex-direction: column; gap: 4px; }
+.lang-btn { display: flex; align-items: center; gap: 8px; background: none; border: none; color: var(--muted); font-size: 12px; padding: 6px 8px; border-radius: 6px; cursor: none; transition: all .18s; width: 100%; text-align: left; }
+.lang-btn:hover { background: var(--card); color: var(--text); }
+.lang-flag { font-size: 16px; width: 20px; flex-shrink: 0; }
+.lang-count { margin-left: auto; font-size: 10px; color: var(--muted); }
+
+/* Sidebar: Tür listesi */
+.genre-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.genre-tag { background: var(--card); border: 1px solid var(--border); color: var(--muted); font-size: 10px; padding: 5px 8px; border-radius: 5px; cursor: none; transition: all .18s; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.genre-tag:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,25,44,0.05); }
+
+/* Sidebar: Popüler mini liste */
+.sb-mini-list { display: flex; flex-direction: column; gap: 2px; }
+.sb-mini-item { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-radius: 6px; cursor: none; transition: background .15s; }
+.sb-mini-item:hover { background: var(--card); }
+.sb-mini-rank { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--muted); width: 20px; flex-shrink: 0; text-align: center; line-height: 1; }
+.sb-mini-rank.top { color: var(--accent); }
+.sb-mini-poster { width: 34px; height: 50px; border-radius: 4px; object-fit: cover; background: var(--card2); flex-shrink: 0; }
+.sb-mini-info { flex: 1; min-width: 0; }
+.sb-mini-title { font-size: 11px; color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
+.sb-mini-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.sb-mini-rating { font-size: 10px; color: var(--gold); font-weight: 700; flex-shrink: 0; }
+
+@media(max-width:1100px){ .home-layout { grid-template-columns: 1fr; } .home-sidebar { display:none; } }
+
 .site-footer { background:var(--surface); border-top:1px solid var(--border); padding:52px 64px; display:grid; grid-template-columns:2.2fr 1fr 1fr 1fr 1fr; gap:48px; margin-top:32px; }
 .footer-brand { display:flex; flex-direction:column; gap:16px; }
 .footer-logo { font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:3px; color:var(--accent); }
@@ -1024,6 +1117,8 @@ async function renderHomePage() {
   el.innerHTML = `
     <div id="heroSection"><div style="height:100vh;display:flex;align-items:center;justify-content:center"><div class="spinner"></div></div></div>
 
+    <div class="home-layout">
+    <div class="home-main">
 
     <div class="sec" style="padding-top:32px">
       <div class="sec-head"><div><div class="sec-title">KATEGORİLER</div></div></div>
@@ -1157,6 +1252,90 @@ async function renderHomePage() {
       </div>
     </div>
 
+    </div><!-- /home-main -->
+
+    <!-- SAĞ SIDEBAR -->
+    <aside class="home-sidebar" id="homeSidebar">
+      <!-- Nette İzle -->
+      <div class="sw">
+        <div class="sw-title">Nette İzle</div>
+        <div class="platform-grid">
+          <button class="platform-btn" onclick="navigate('browse',{type:'tv',title:'NETFLIX',sub:'Netflix yapımları',sortBy:'popularity.desc'})">Netflix</button>
+          <button class="platform-btn" onclick="navigate('browse',{type:'movie',title:'DİZİ PLATFORMU',sortBy:'popularity.desc'})">Prime</button>
+          <button class="platform-btn" onclick="navigate('browse',{type:'movie',title:'DİSNEY+',sortBy:'popularity.desc'})">Disney+</button>
+          <button class="platform-btn" onclick="navigate('browse',{type:'tv',title:'APPLE TV+',sortBy:'vote_average.desc'})">Apple TV+</button>
+          <button class="platform-btn" onclick="navigate('browse',{type:'movie',title:'MAX',sortBy:'popularity.desc'})">Max</button>
+          <button class="platform-btn" onclick="navigate('browse',{type:'movie',title:'HULU',sortBy:'popularity.desc'})">Hulu</button>
+        </div>
+      </div>
+
+      <!-- Dile Göre Filmler -->
+      <div class="sw">
+        <div class="sw-title">Dile Göre</div>
+        <div class="lang-grid">
+          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'İNGİLİZCE FİLMLER',sortBy:'popularity.desc'})">
+            <span class="lang-flag">🇺🇸</span> İngilizce <span class="lang-count">film</span>
+          </button>
+          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'KORECE FİLMLER',sortBy:'popularity.desc'})">
+            <span class="lang-flag">🇰🇷</span> Korece <span class="lang-count">film</span>
+          </button>
+          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'JAPONCA',sortBy:'popularity.desc'})">
+            <span class="lang-flag">🇯🇵</span> Japonca <span class="lang-count">anime</span>
+          </button>
+          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'FRANSIZCA',sortBy:'popularity.desc'})">
+            <span class="lang-flag">🇫🇷</span> Fransızca <span class="lang-count">film</span>
+          </button>
+          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'İSPANYOLCA',sortBy:'popularity.desc'})">
+            <span class="lang-flag">🇪🇸</span> İspanyolca <span class="lang-count">dizi</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Türlere Göre -->
+      <div class="sw">
+        <div class="sw-title">Türe Göre</div>
+        <div class="genre-grid">
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:28,title:'AKSİYON',sortBy:'popularity.desc'})">🎬 Aksiyon</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:878,title:'BİLİM KURGU',sortBy:'popularity.desc'})">🚀 Sci-Fi</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:27,title:'KORKU',sortBy:'popularity.desc'})">💀 Korku</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:35,title:'KOMEDİ',sortBy:'popularity.desc'})">😂 Komedi</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:18,title:'DRAM',sortBy:'popularity.desc'})">😭 Dram</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:80,title:'SUÇ',sortBy:'popularity.desc'})">🔍 Suç</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:53,title:'GERİLİM',sortBy:'popularity.desc'})">🧠 Gerilim</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:14,title:'FANTEZİ',sortBy:'popularity.desc'})">🐲 Fantezi</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:16,title:'ANİMASYON',sortBy:'popularity.desc'})">🎭 Animasyon</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:10749,title:'ROMANTİK',sortBy:'popularity.desc'})">💑 Romantik</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:99,title:'BELGESEL',sortBy:'popularity.desc'})">🌍 Belgesel</button>
+          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:12,title:'MACERA',sortBy:'popularity.desc'})">🗺 Macera</button>
+        </div>
+      </div>
+
+      <!-- Özel Kategoriler -->
+      <div class="sw">
+        <div class="sw-title">Özel Kategoriler</div>
+        <div class="lang-grid">
+          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'MARVEL FİLMLERİ',sortBy:'popularity.desc'})">⚡ Marvel Filmleri</button>
+          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'DC FİLMLERİ',sortBy:'popularity.desc'})">🦇 DC Filmleri</button>
+          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'AMAZON YAPIMLAR',sortBy:'popularity.desc'})">📦 Amazon Yapımlar</button>
+          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'YÜKSEK PUANLI',sortBy:'vote_average.desc'})">⭐ Yüksek Puanlı</button>
+        </div>
+      </div>
+
+      <!-- Popüler Diziler -->
+      <div class="sw" id="sbPopularSeries">
+        <div class="sw-title">Popüler Diziler</div>
+        <div class="sb-mini-list" id="sbSeriesList">
+          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
+          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
+          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
+          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
+          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
+        </div>
+      </div>
+    </aside>
+
+    </div><!-- /home-layout -->
+
     <footer class="site-footer">
       <!-- Marka sütunu -->
       <div class="footer-brand">
@@ -1229,17 +1408,44 @@ async function renderHomePage() {
   loadCuratedSeries('classicSeries', TR_CLASSIC_SERIES);
 
   // TMDB gerçek zamanlı
-  loadSection('weeklyTrending', '/trending/all/week', { 'vote_count.gte': 50 }, 'auto');
+  loadSection('weeklyTrending', '/trending/all/week', { 'vote_count.gte': 100, without_genres: '10763,99,10764,10767' }, 'auto');
   // Tagesschau gibi haber programları, belgesel kanalları filtrele (vote_count yüksek tutarak)
   loadSection('popularSeriesLive', '/discover/tv', {
     sort_by: 'popularity.desc',
     with_origin_country: 'US|GB|KR|JP|FR|ES',
-    without_genres: '10763,99',  // 10763=News, 99=Documentary
-    'vote_count.gte': 100,
-    with_type: '2|4'  // 2=Miniseries, 4=Scripted
+    without_genres: '10763,99,10764,10767',  // News, Documentary, Reality, Talk
+    'vote_count.gte': 300,   // Çok daha yüksek eşik — belgesel/köpek şovu gibi şeyler elenir
+    'vote_average.gte': 6.5, // Kalite filtresi
+    with_type: '4',          // Sadece Scripted (senaryo yazılmış diziler)
+    with_original_language: 'en|ko|ja|es|fr'
   }, 'tv');
   loadSection('newRelease', '/movie/now_playing', { 'vote_count.gte': 30, without_genres: '10763,99' }, 'movie');
   loadUpcomingStrip();
+  loadSidebarSeries();
+}
+
+async function loadSidebarSeries() {
+  const el = document.getElementById('sbSeriesList');
+  if (!el) return;
+  try {
+    const d = await api('/tv/popular', { page: 1 });
+    const items = d.results.filter(s => s.poster_path).slice(0, 8);
+    el.innerHTML = items.map((s, i) => {
+      const title = s.name || '';
+      const year = (s.first_air_date || '').slice(0,4);
+      const rating = s.vote_average?.toFixed(1) || '—';
+      return `
+        <div class="sb-mini-item" onclick="navigate('detail',{id:${s.id},mediaType:'tv'})">
+          <span class="sb-mini-rank ${i<3?'top':''}">${i+1}</span>
+          <img class="sb-mini-poster" src="${IMG_W}${s.poster_path}" alt="${esc(title)}" loading="lazy">
+          <div class="sb-mini-info">
+            <div class="sb-mini-title">${esc(title)}</div>
+            <div class="sb-mini-meta">${year} · Dizi</div>
+          </div>
+          <span class="sb-mini-rating">★${rating}</span>
+        </div>`;
+    }).join('');
+  } catch(e) { console.error(e); }
 }
 
 // Küratörlü dizi listesini yükle (ID listesinden)
@@ -1422,7 +1628,7 @@ function renderHero(idx) {
           <span class="dot"></span>
           <span class="hm">${yr}</span>
           <span class="dot"></span>
-          <span class="hm">HD · 4K</span>
+          <span class="hm">HD</span>
         </div>
         <div class="hero-genres">${gs.map(g=>`<span class="h-pill">${g}</span>`).join('')}</div>
         <p class="hero-desc">${esc(m.overview || 'Açıklama bulunamadı.')}</p>
@@ -1779,6 +1985,10 @@ async function renderDetailPage(id, mediaType) {
                 </svg>
                 ${inList ? 'Listede' : 'Listeme Ekle'}
               </button>
+              <a href="https://www.imdb.com/find/?q=${encodeURIComponent(title)}&s=tt&ttype=${mediaType==='tv'?'tv':'ft'}" target="_blank" class="btn-list" style="text-decoration:none;background:rgba(245,197,24,0.12);border-color:rgba(245,197,24,0.35);color:var(--gold)">
+                <span style="font-weight:800;font-size:12px">IMDb</span>
+                ★ ${rating}
+              </a>
             </div>
           </div>
         </div>
@@ -2879,9 +3089,12 @@ function filmCardHtml(m, mediaType) {
   const title = m.title || m.name || '';
   const releaseDate = m.release_date || m.first_air_date || '';
   const year = releaseDate.slice(0,4);
-  // Yayına girmemiş içerikleri gizle (sadece filmler için, diziler için ilk yayın tarihi farklı çalışır)
   if (mediaType === 'movie' && releaseDate && releaseDate > new Date().toISOString().split('T')[0]) return '';
   const rating = m.vote_average ? m.vote_average.toFixed(1) : '—';
+  const imdbUrl = `https://www.imdb.com/find/?q=${encodeURIComponent(title)}&s=tt&ttype=${mediaType==='tv'?'tv':'ft'}`;
+  // Yıla göre dubaj/altyazı tahmini (2020+ genelde var)
+  const hasDub = year >= '2018';
+  const hasSub = true;
   return `
     <div class="film-card" onclick="navigate('detail',{id:${m.id},mediaType:'${mediaType}'})">
       <div class="fc-wrap">
@@ -2890,12 +3103,22 @@ function filmCardHtml(m, mediaType) {
           : `<div class="fc-img" style="background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:rgba(255,255,255,0.3);text-align:center;padding:12px">${esc(title).toUpperCase()}</div>`
         }
         <div class="fc-badge">HD</div>
-        <div class="fc-rating">★ ${rating}</div>
+        <div class="fc-rating" onclick="event.stopPropagation();window.open('${imdbUrl}','_blank')" title="IMDb'de Gör" style="cursor:pointer">
+          <span style="background:var(--gold);color:#000;font-size:8px;font-weight:800;padding:1px 4px;border-radius:2px;letter-spacing:.3px;margin-right:2px">IMDb</span>${rating}
+        </div>
+        <div class="fc-dub-badge">
+          ${hasDub ? '<span class="fc-dub">TR DUB</span>' : ''}
+          ${hasSub ? '<span class="fc-sub">ALTYAZI</span>' : ''}
+        </div>
         <div class="fc-overlay"><div class="fc-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#07090e"><polygon points="5,3 19,12 5,21"/></svg></div></div>
       </div>
       <div class="fc-info">
         <div class="fc-title">${esc(title)}</div>
-        <div class="fc-meta"><span>${year}</span><span>·</span><span>${(m.genre_ids||[]).slice(0,1).map(id=>genres[id]||'').join('')||'İçerik'}</span></div>
+        <div class="fc-meta">
+          <span>${year}</span><span>·</span>
+          <span>${(m.genre_ids||[]).slice(0,1).map(id=>genres[id]||'').join('')||'İçerik'}</span>
+          <a href="${imdbUrl}" target="_blank" onclick="event.stopPropagation()" class="fc-imdb" title="IMDb'de Gör">IMDb</a>
+        </div>
       </div>
     </div>`;
 }
