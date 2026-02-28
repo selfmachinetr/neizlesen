@@ -50,7 +50,6 @@
   --muted: #707585;
   --nav-h: 60px;
   --radius: 8px;
-  --sidebar-w: 260px;
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -76,8 +75,8 @@ nav {
   z-index: 500; transition: background .3s, border-color .3s;
 }
 nav.scrolled { background: rgba(7,9,14,0.96); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); }
-.logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: #fff; text-decoration: none; cursor: none; display: flex; align-items: center; gap: 0; background: var(--accent); padding: 5px 12px; border-radius: 6px; }
-.logo span { color: rgba(255,255,255,0.75); margin-left:3px; font-size:19px; }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; color: var(--accent); text-decoration: none; cursor: none; }
+.logo span { color: #fff; }
 .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
 .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 400; transition: color .2s; position: relative; cursor: none; }
 .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 1px; background: var(--accent); transform: scaleX(0); transition: transform .2s; }
@@ -656,11 +655,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
   .info-card { padding: 16px; }
   .similar-sec { padding: 20px 16px; }
   /* ─── ANA SAYFA İKİ KOLON LAYOUT ─── */
-.home-layout { display: grid; grid-template-columns: 1fr var(--sidebar-w); gap: 0; min-height: 60vh; }
-.home-main { min-width: 0; }
-.home-sidebar { background: var(--surface); border-left: 1px solid var(--border); padding: 0; position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; flex-shrink: 0; }
-.home-sidebar::-webkit-scrollbar { width: 4px; }
-.home-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius:2px; }
+
 
 /* Sidebar Widget */
 .sw { padding: 18px 16px; border-bottom: 1px solid var(--border); }
@@ -696,7 +691,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 .sb-mini-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
 .sb-mini-rating { font-size: 10px; color: var(--gold); font-weight: 700; flex-shrink: 0; }
 
-@media(max-width:1100px){ .home-layout { grid-template-columns: 1fr; } .home-sidebar { display:none; } }
+
 
 .site-footer { grid-template-columns: 1fr 1fr !important; gap: 24px; padding: 32px 16px; }
   .footer-bottom { padding: 14px 16px; }
@@ -706,11 +701,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
   .footer { grid-template-columns: 1fr 1fr; gap: 24px; padding: 32px 16px; }
 }
 /* ─── ANA SAYFA İKİ KOLON LAYOUT ─── */
-.home-layout { display: grid; grid-template-columns: 1fr var(--sidebar-w); gap: 0; min-height: 60vh; }
-.home-main { min-width: 0; }
-.home-sidebar { background: var(--surface); border-left: 1px solid var(--border); padding: 0; position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; flex-shrink: 0; }
-.home-sidebar::-webkit-scrollbar { width: 4px; }
-.home-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius:2px; }
+
 
 /* Sidebar Widget */
 .sw { padding: 18px 16px; border-bottom: 1px solid var(--border); }
@@ -746,7 +737,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 .sb-mini-meta { font-size: 10px; color: var(--muted); margin-top: 2px; }
 .sb-mini-rating { font-size: 10px; color: var(--gold); font-weight: 700; flex-shrink: 0; }
 
-@media(max-width:1100px){ .home-layout { grid-template-columns: 1fr; } .home-sidebar { display:none; } }
+
 
 .site-footer { background:var(--surface); border-top:1px solid var(--border); padding:52px 64px; display:grid; grid-template-columns:2.2fr 1fr 1fr 1fr 1fr; gap:48px; margin-top:32px; }
 .footer-brand { display:flex; flex-direction:column; gap:16px; }
@@ -781,6 +772,19 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 .cic-icon { font-size:22px; }
 .cic-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
 .cic-val { font-size:14px; color:var(--text); }
+
+/* ===== KALDIĞIN YERDEN (Continue Watching) ===== */
+.cw-card { flex-shrink: 0; width: 160px; cursor: none; scroll-snap-align: start; }
+.cw-card:hover .cw-poster { transform: scale(1.05); filter: brightness(.6); }
+.cw-card:hover .cw-play-icon { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+.cw-poster-wrap { position: relative; border-radius: 9px; overflow: hidden; aspect-ratio: 2/3; background: var(--card); margin-bottom: 8px; }
+.cw-poster { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s, filter .3s; }
+.cw-progress-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,.15); }
+.cw-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s; }
+.cw-play-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(.85); opacity: 0; width: 44px; height: 44px; background: rgba(232,25,44,.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all .25s; box-shadow: 0 0 24px rgba(232,25,44,.5); }
+.cw-ep-badge { position: absolute; top: 7px; left: 7px; background: rgba(10,10,15,.88); color: #fff; font-size: 9px; font-weight: 700; padding: 3px 7px; border-radius: 4px; letter-spacing: .5px; backdrop-filter: blur(6px); }
+.cw-title { font-size: 12px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+.cw-pct { font-size: 11px; color: var(--accent); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -1117,8 +1121,21 @@ async function renderHomePage() {
   el.innerHTML = `
     <div id="heroSection"><div style="height:100vh;display:flex;align-items:center;justify-content:center"><div class="spinner"></div></div></div>
 
-    <div class="home-layout">
-    <div class="home-main">
+    <!-- KALDIĞIN YERDEN DEVAM ET -->
+    <div class="sec" id="cwSection" style="padding-top:32px;display:none">
+      <div class="sec-head">
+        <div>
+          <div class="sec-title">KALDIĞIN <span>YERDEN</span></div>
+          <div class="sec-sub">İzlemeye kaldığın yerden devam et</div>
+        </div>
+        <a class="see-all" href="#" onclick="clearContinueWatching();return false" style="color:var(--muted);font-size:12px">Temizle</a>
+      </div>
+      <div class="h-scroll-wrap">
+        <div class="h-scroll" id="cwRow"></div>
+        <button class="scroll-btn left" onclick="scrollRowEl(this,-1)">&#8249;</button>
+        <button class="scroll-btn right" onclick="scrollRowEl(this,1)">&#8250;</button>
+      </div>
+    </div>
 
     <div class="sec" style="padding-top:32px">
       <div class="sec-head"><div><div class="sec-title">KATEGORİLER</div></div></div>
@@ -1252,89 +1269,9 @@ async function renderHomePage() {
       </div>
     </div>
 
-    </div><!-- /home-main -->
 
-    <!-- SAĞ SIDEBAR -->
-    <aside class="home-sidebar" id="homeSidebar">
-      <!-- Nette İzle -->
-      <div class="sw">
-        <div class="sw-title">Nette İzle</div>
-        <div class="platform-grid">
-          <button class="platform-btn" onclick="navigate('browse',{type:'tv',title:'NETFLIX',sub:'Netflix yapımları',sortBy:'popularity.desc'})">Netflix</button>
-          <button class="platform-btn" onclick="navigate('browse',{type:'movie',title:'DİZİ PLATFORMU',sortBy:'popularity.desc'})">Prime</button>
-          <button class="platform-btn" onclick="navigate('browse',{type:'movie',title:'DİSNEY+',sortBy:'popularity.desc'})">Disney+</button>
-          <button class="platform-btn" onclick="navigate('browse',{type:'tv',title:'APPLE TV+',sortBy:'vote_average.desc'})">Apple TV+</button>
-          <button class="platform-btn" onclick="navigate('browse',{type:'movie',title:'MAX',sortBy:'popularity.desc'})">Max</button>
-          <button class="platform-btn" onclick="navigate('browse',{type:'movie',title:'HULU',sortBy:'popularity.desc'})">Hulu</button>
-        </div>
-      </div>
 
-      <!-- Dile Göre Filmler -->
-      <div class="sw">
-        <div class="sw-title">Dile Göre</div>
-        <div class="lang-grid">
-          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'İNGİLİZCE FİLMLER',sortBy:'popularity.desc'})">
-            <span class="lang-flag">🇺🇸</span> İngilizce <span class="lang-count">film</span>
-          </button>
-          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'KORECE FİLMLER',sortBy:'popularity.desc'})">
-            <span class="lang-flag">🇰🇷</span> Korece <span class="lang-count">film</span>
-          </button>
-          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'JAPONCA',sortBy:'popularity.desc'})">
-            <span class="lang-flag">🇯🇵</span> Japonca <span class="lang-count">anime</span>
-          </button>
-          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'FRANSIZCA',sortBy:'popularity.desc'})">
-            <span class="lang-flag">🇫🇷</span> Fransızca <span class="lang-count">film</span>
-          </button>
-          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'İSPANYOLCA',sortBy:'popularity.desc'})">
-            <span class="lang-flag">🇪🇸</span> İspanyolca <span class="lang-count">dizi</span>
-          </button>
-        </div>
-      </div>
 
-      <!-- Türlere Göre -->
-      <div class="sw">
-        <div class="sw-title">Türe Göre</div>
-        <div class="genre-grid">
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:28,title:'AKSİYON',sortBy:'popularity.desc'})">🎬 Aksiyon</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:878,title:'BİLİM KURGU',sortBy:'popularity.desc'})">🚀 Sci-Fi</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:27,title:'KORKU',sortBy:'popularity.desc'})">💀 Korku</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:35,title:'KOMEDİ',sortBy:'popularity.desc'})">😂 Komedi</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:18,title:'DRAM',sortBy:'popularity.desc'})">😭 Dram</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:80,title:'SUÇ',sortBy:'popularity.desc'})">🔍 Suç</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:53,title:'GERİLİM',sortBy:'popularity.desc'})">🧠 Gerilim</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:14,title:'FANTEZİ',sortBy:'popularity.desc'})">🐲 Fantezi</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:16,title:'ANİMASYON',sortBy:'popularity.desc'})">🎭 Animasyon</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:10749,title:'ROMANTİK',sortBy:'popularity.desc'})">💑 Romantik</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:99,title:'BELGESEL',sortBy:'popularity.desc'})">🌍 Belgesel</button>
-          <button class="genre-tag" onclick="navigate('browse',{type:'movie',genreId:12,title:'MACERA',sortBy:'popularity.desc'})">🗺 Macera</button>
-        </div>
-      </div>
-
-      <!-- Özel Kategoriler -->
-      <div class="sw">
-        <div class="sw-title">Özel Kategoriler</div>
-        <div class="lang-grid">
-          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'MARVEL FİLMLERİ',sortBy:'popularity.desc'})">⚡ Marvel Filmleri</button>
-          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'DC FİLMLERİ',sortBy:'popularity.desc'})">🦇 DC Filmleri</button>
-          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'AMAZON YAPIMLAR',sortBy:'popularity.desc'})">📦 Amazon Yapımlar</button>
-          <button class="lang-btn" onclick="navigate('browse',{type:'movie',title:'YÜKSEK PUANLI',sortBy:'vote_average.desc'})">⭐ Yüksek Puanlı</button>
-        </div>
-      </div>
-
-      <!-- Popüler Diziler -->
-      <div class="sw" id="sbPopularSeries">
-        <div class="sw-title">Popüler Diziler</div>
-        <div class="sb-mini-list" id="sbSeriesList">
-          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
-          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
-          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
-          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
-          <div class="skeleton" style="height:52px;border-radius:6px;margin-bottom:4px"></div>
-        </div>
-      </div>
-    </aside>
-
-    </div><!-- /home-layout -->
 
     <footer class="site-footer">
       <!-- Marka sütunu -->
@@ -1408,44 +1345,19 @@ async function renderHomePage() {
   loadCuratedSeries('classicSeries', TR_CLASSIC_SERIES);
 
   // TMDB gerçek zamanlı
-  loadSection('weeklyTrending', '/trending/all/week', { 'vote_count.gte': 100, without_genres: '10763,99,10764,10767' }, 'auto');
+  loadSection('weeklyTrending', '/trending/all/week', { 'vote_count.gte': 150, without_genres: '10763,99,10764,10767,10768' }, 'auto');
   // Tagesschau gibi haber programları, belgesel kanalları filtrele (vote_count yüksek tutarak)
   loadSection('popularSeriesLive', '/discover/tv', {
     sort_by: 'popularity.desc',
     with_origin_country: 'US|GB|KR|JP|FR|ES',
-    without_genres: '10763,99,10764,10767',  // News, Documentary, Reality, Talk
+    without_genres: '10763,99,10764,10767,10768',  // News, Documentary, Reality, Talk, War&Politics
     'vote_count.gte': 300,   // Çok daha yüksek eşik — belgesel/köpek şovu gibi şeyler elenir
     'vote_average.gte': 6.5, // Kalite filtresi
     with_type: '4',          // Sadece Scripted (senaryo yazılmış diziler)
-    with_original_language: 'en|ko|ja|es|fr'
   }, 'tv');
   loadSection('newRelease', '/movie/now_playing', { 'vote_count.gte': 30, without_genres: '10763,99' }, 'movie');
   loadUpcomingStrip();
-  loadSidebarSeries();
-}
-
-async function loadSidebarSeries() {
-  const el = document.getElementById('sbSeriesList');
-  if (!el) return;
-  try {
-    const d = await api('/tv/popular', { page: 1 });
-    const items = d.results.filter(s => s.poster_path).slice(0, 8);
-    el.innerHTML = items.map((s, i) => {
-      const title = s.name || '';
-      const year = (s.first_air_date || '').slice(0,4);
-      const rating = s.vote_average?.toFixed(1) || '—';
-      return `
-        <div class="sb-mini-item" onclick="navigate('detail',{id:${s.id},mediaType:'tv'})">
-          <span class="sb-mini-rank ${i<3?'top':''}">${i+1}</span>
-          <img class="sb-mini-poster" src="${IMG_W}${s.poster_path}" alt="${esc(title)}" loading="lazy">
-          <div class="sb-mini-info">
-            <div class="sb-mini-title">${esc(title)}</div>
-            <div class="sb-mini-meta">${year} · Dizi</div>
-          </div>
-          <span class="sb-mini-rating">★${rating}</span>
-        </div>`;
-    }).join('');
-  } catch(e) { console.error(e); }
+  refreshContinueWatching(); // vidLinkProgress'ten oku
 }
 
 // Küratörlü dizi listesini yükle (ID listesinden)
@@ -2203,10 +2115,9 @@ window.loadSeason = async function(seriesId, seasonNum, tabEl, seasonMeta) {
 // ─────────────────────────────────────────────
 const PLAYER_SOURCES = [
   { name: 'Kaynak 1', buildUrl: (id, type, s, e, sec) => {
-    const p = new URLSearchParams({ autoPlay: 'true' });
-    if (sec > 10) p.set('progress', String(Math.floor(sec)));
-    if (type === 'tv') { p.set('nextEpisode','true'); p.set('episodeSelector','true'); return `https://www.vidking.net/embed/tv/${id}/${s}/${e}?${p}`; }
-    return `https://www.vidking.net/embed/movie/${id}?${p}`;
+    const p = new URLSearchParams({ autoplay: 'true', primaryColor: 'e8192c' });
+    if (type === 'tv') { return `https://vidlink.pro/tv/${id}/${s}/${e}?${p}`; }
+    return `https://vidlink.pro/movie/${id}?${p}`;
   }},
   { name: 'Kaynak 2', buildUrl: (id, type, s, e, sec) => {
     const p = new URLSearchParams();
@@ -2229,6 +2140,86 @@ const PLAYER_SOURCES = [
 ];
 let _currentSourceIdx = 0;
 let _currentPlayerArgs = null;
+
+
+// ─────────────────────────────────────────────
+// VİDLİNK PROGRESS TRACKING
+// ─────────────────────────────────────────────
+window.addEventListener('message', (event) => {
+  if (event.origin !== 'https://vidlink.pro') return;
+  if (event.data?.type === 'MEDIA_DATA') {
+    const mediaData = event.data.data;
+    localStorage.setItem('vidLinkProgress', JSON.stringify(mediaData));
+    // Ana sayfadaki "Kaldığın Yerden" bölümünü güncelle (açıksa)
+    if (currentPage === 'home') refreshContinueWatching();
+  }
+});
+
+function getVidlinkProgress() {
+  try { return JSON.parse(localStorage.getItem('vidLinkProgress') || '{}'); } catch { return {}; }
+}
+
+function getContinueWatchingItems() {
+  const data = getVidlinkProgress();
+  return Object.values(data)
+    .filter(item => {
+      if (!item.progress || !item.progress.duration) return false;
+      const pct = item.progress.watched / item.progress.duration;
+      return pct > 0.02 && pct < 0.95; // %2'den fazla, %95'ten az izlenmiş
+    })
+    .sort((a, b) => (b.last_updated || 0) - (a.last_updated || 0))
+    .slice(0, 12);
+}
+
+function refreshContinueWatching() {
+  const el = document.getElementById('cwSection');
+  if (!el) return;
+  const items = getContinueWatchingItems();
+  if (items.length === 0) { el.style.display = 'none'; return; }
+  el.style.display = '';
+  const row = document.getElementById('cwRow');
+  if (!row) return;
+  row.innerHTML = items.map(item => {
+    const pct = Math.round((item.progress.watched / item.progress.duration) * 100);
+    const mediaType = item.type || 'movie';
+    const poster = item.poster_path ? 'https://image.tmdb.org/t/p/w342' + item.poster_path : '';
+    const episodeLabel = item.last_season_watched
+      ? `S${String(item.last_season_watched).padStart(2,'0')} E${String(item.last_episode_watched||1).padStart(2,'0')}`
+      : '';
+    const watched = item.progress.watched;
+    const season = parseInt(item.last_season_watched) || 1;
+    const episode = parseInt(item.last_episode_watched) || 1;
+    return `
+      <div class="cw-card" onclick="navigateAndResume(${item.id},'${mediaType}',${season},${episode},${Math.floor(watched)})">
+        <div class="cw-poster-wrap">
+          ${poster ? `<img class="cw-poster" src="${poster}" alt="${esc(item.title||'')}" loading="lazy">` : `<div class="cw-poster" style="background:var(--card2)"></div>`}
+          <div class="cw-progress-bar"><div class="cw-progress-fill" style="width:${pct}%"></div></div>
+          <div class="cw-play-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><polygon points="5,3 19,12 5,21"/></svg>
+          </div>
+          ${episodeLabel ? `<div class="cw-ep-badge">${episodeLabel}</div>` : ''}
+        </div>
+        <div class="cw-title">${esc(item.title||'')}</div>
+        <div class="cw-pct">%${pct} izlendi</div>
+      </div>`;
+  }).join('');
+}
+
+
+window.clearContinueWatching = function() {
+  localStorage.removeItem('vidLinkProgress');
+  const el = document.getElementById('cwSection');
+  if (el) el.style.display = 'none';
+  showToast('İzleme geçmişi temizlendi');
+};
+window.navigateAndResume = function(id, mediaType, season, episode, startSec) {
+  navigate('detail', { id, mediaType });
+  // Detay sayfası yüklendikten sonra player'ı başlat
+  setTimeout(() => {
+    startPlayer(id, mediaType, season, episode, startSec);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 800);
+};
 
 window.startPlayer = function(id, mediaType, season, episode, startSec, sourceIdx = 0) {
   _currentSourceIdx = sourceIdx;
