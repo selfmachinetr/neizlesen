@@ -32,6 +32,12 @@
 
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.themoviedb.org">
+<link rel="preconnect" href="https://image.tmdb.org">
+<link rel="dns-prefetch" href="https://vidlink.pro">
+<link rel="dns-prefetch" href="https://vidsrc.to">
+<meta name="theme-color" content="#0b0b0f">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -177,9 +183,6 @@ nav.scrolled { background: rgba(7,9,14,0.96); backdrop-filter: blur(24px); borde
 .film-card:hover .fc-play { transform: scale(1); }
 .fc-rating { position: absolute; top: 8px; right: 8px; background: rgba(10,10,15,0.88); border: 1px solid rgba(245,197,24,0.35); color: var(--gold); font-size: 10px; font-weight: 700; padding: 3px 7px; border-radius: 5px; display: flex; align-items: center; gap: 3px; backdrop-filter: blur(8px); letter-spacing: .3px; }
 .fc-badge { position: absolute; top: 8px; left: 8px; background: rgba(232,25,44,0.18); border: 1px solid rgba(232,25,44,0.4); color: var(--accent); font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 1px; }
-.fc-dub-badge { position: absolute; bottom: 8px; left: 8px; display: flex; gap: 4px; }
-.fc-dub { background: rgba(61,155,255,0.18); border: 1px solid rgba(61,155,255,0.4); color: #5bb8ff; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: .8px; }
-.fc-sub { background: rgba(255,107,53,0.18); border: 1px solid rgba(255,107,53,0.4); color: #ff8c5a; font-size: 8px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: .8px; }
 .fc-info { padding: 9px 11px 12px; }
 .fc-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; }
 .fc-meta { font-size: 11px; color: var(--muted); display: flex; gap: 5px; align-items: center; }
@@ -736,8 +739,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 
 /* ===== FOOTER DOWNLOAD BUTTON ===== */
 .footer-download-wrap { display: flex; flex-direction: column; gap: 10px; }
-.footer-dl-btn { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: var(--text); transition: all .22s; cursor: none; }
-.footer-dl-btn:hover { border-color: rgba(232,25,44,.45); background: rgba(232,25,44,.07); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(232,25,44,.15); }
+.footer-dl-btn { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: var(--text); opacity: .5; pointer-events: none; cursor: default; }
 .footer-dl-icon { width: 36px; height: 36px; background: rgba(232,25,44,.12); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
 .footer-dl-info { display: flex; flex-direction: column; gap: 2px; }
 .footer-dl-label { font-size: 13px; font-weight: 600; color: #fff; letter-spacing: .3px; }
@@ -756,7 +758,34 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 .cookie-decline { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 9px 16px; border-radius: 8px; font-size: 13px; cursor: none; transition: all .2s; }
 .cookie-decline:hover { border-color: rgba(255,255,255,.2); color: var(--text); }
 @media(max-width:640px){ .cookie-banner { flex-direction: column; align-items: flex-start; padding: 16px; } .cookie-btns { width: 100%; } .cookie-accept, .cookie-decline { flex: 1; text-align: center; } }
+
+/* ===== MOBİL: CUSTOM CURSOR KAPAT ===== */
+@media (pointer: coarse) {
+  *, *::before, *::after { cursor: auto !important; }
+  a, button, [onclick], select, input, textarea, label { cursor: pointer !important; }
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+
+/* ===== ARAMA: SON ARAMALAR & POPÜLER ÖNERİLER ===== */
+.sug-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); padding: 10px 14px 4px; text-transform: uppercase; display: flex; align-items: center; justify-content: space-between; }
+.sug-clear-btn { background: none; border: none; color: var(--accent); font-size: 10px; cursor: pointer; letter-spacing: .3px; font-weight: 600; padding: 0; }
+.sug-history-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.sug-history .sug-title, .sug-popular .sug-title { font-size: 13px; }
+
+/* ===== BÖLÜM İZLENDİ ===== */
+.ep-watched { opacity: .75; }
+.ep-watched:hover { opacity: 1; }
 </style>
+
+<!-- Google Analytics 4 — Measurement ID'nizi buraya girin -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script> -->
+
 </head>
 <body>
 
@@ -773,7 +802,7 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
   <p class="cookie-text">
     Bu site, deneyiminizi geliştirmek için çerezler ve yerel depolama (localStorage) kullanmaktadır. 
     İzleme geçmişiniz ve listeniz yalnızca cihazınızda saklanır, sunucuya gönderilmez. 
-    Devam ederek <a href="#" onclick="navigate('dmca');return false">Kullanım Şartları</a>'nı kabul etmiş sayılırsınız.
+    Devam ederek <a href="#" onclick="navigate('terms');return false">Kullanım Şartları</a>'nı kabul etmiş sayılırsınız.
   </p>
   <div class="cookie-btns">
     <button class="cookie-decline" onclick="closeCookieBanner(false)">Reddet</button>
@@ -836,6 +865,8 @@ body.light .info-card { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 <div class="page" id="page-person"></div>
 <div class="page" id="page-404"></div>
 <div class="page" id="page-dmca"></div>
+<div class="page" id="page-privacy"></div>
+<div class="page" id="page-terms"></div>
 <div class="page" id="page-contact"></div>
 
 <!-- MOBILE OVERLAY + MENU -->
@@ -954,6 +985,8 @@ let isDark = localStorage.getItem('cm_theme') !== 'light';
   // URL-based routing
   handleURL();
   window.addEventListener('popstate', handleURL);
+  // Footer yılı dinamik
+  const fyEl = document.getElementById('footerYear'); if (fyEl) fyEl.textContent = new Date().getFullYear();
 })();
 
 // ─────────────────────────────────────────────
@@ -966,12 +999,42 @@ async function api(path, params = {}) {
   const p = new URLSearchParams({ api_key: API_KEY, language: 'tr-TR', ...params });
   const url = `${BASE}${path}?${p}`;
   if (_apiCache.has(url)) return _apiCache.get(url);
-  const r = await fetch(url);
+  let r;
+  try {
+    r = await fetch(url);
+  } catch(networkErr) {
+    // İnternet bağlantısı yok
+    showOfflineBanner();
+    throw new Error('network_offline');
+  }
   if (!r.ok) throw new Error('API error ' + r.status);
   const data = await r.json();
   _apiCache.set(url, data);
+  hideOfflineBanner();
   return data;
 }
+
+function showOfflineBanner() {
+  let b = document.getElementById('offlineBanner');
+  if (!b) {
+    b = document.createElement('div');
+    b.id = 'offlineBanner';
+    b.innerHTML = `<span>📡 İnternet bağlantısı yok — içerikler yüklenemiyor</span><button onclick="document.getElementById('offlineBanner').style.display='none'">✕</button>`;
+    b.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid rgba(232,25,44,.4);border-radius:10px;padding:12px 18px;font-size:13px;color:#fff;z-index:9990;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,.5);white-space:nowrap;';
+    b.querySelector('button').style.cssText = 'background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:0;line-height:1;';
+    document.body.appendChild(b);
+  }
+  b.style.display = 'flex';
+}
+
+function hideOfflineBanner() {
+  const b = document.getElementById('offlineBanner');
+  if (b) b.style.display = 'none';
+}
+
+// Bağlantı geri gelince banner'ı gizle
+window.addEventListener('online', hideOfflineBanner);
+window.addEventListener('offline', () => showOfflineBanner());
 
 // ─────────────────────────────────────────────
 // GENRES
@@ -989,12 +1052,14 @@ async function loadGenres() {
 // ─────────────────────────────────────────────
 // URL ROUTING
 // ─────────────────────────────────────────────
-function handleURL() {
+function handleURL(event) {
   const hash = location.hash.slice(1) || 'home';
   const [page, ...rest] = hash.split('/');
   const opts = {};
   if (rest[0]) opts.id = parseInt(rest[0]);
   if (rest[1]) opts.mediaType = rest[1];
+  // Geri/ileri tuşunda scroll pozisyonunu restore et
+  const savedScroll = event?.state?.scrollY ?? 0;
   if (rest[2]) opts.query = decodeURIComponent(rest[2]);
   navigateInternal(page, opts);
 }
@@ -1004,7 +1069,9 @@ window.navigate = function(page, opts = {}, pushState = true) {
   if (opts.id) hash += '/' + opts.id + (opts.mediaType ? '/' + opts.mediaType : '');
   if (opts.query) hash += '/' + encodeURIComponent(opts.query);
   if (pushState) {
-    history.pushState({}, '', hash);
+    // Mevcut sayfanın scroll pozisyonunu kaydet
+    history.replaceState({ scrollY: window.scrollY }, '', location.hash || '#home');
+    history.pushState({ scrollY: 0 }, '', hash);
   }
   navigateInternal(page, opts);
 };
@@ -1030,7 +1097,9 @@ function navigateInternal(page, opts = {}) {
   currentPage = page;
   const navEl = document.getElementById('nav-' + page);
   if (navEl) navEl.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'instant' });
+  // Geri tuşuyla gelindiyse scroll pozisyonunu restore et
+  const _scroll = (typeof savedScroll !== 'undefined') ? savedScroll : 0;
+  setTimeout(() => window.scrollTo({ top: _scroll, behavior: 'instant' }), 50);
 
   // Sayfa başlığını sıfırla (detail sayfası kendi başlığını set eder)
   if (page !== 'detail') document.title = 'Ne İzlesen — Film & Dizi İzle';
@@ -1053,6 +1122,8 @@ function navigateInternal(page, opts = {}) {
     case 'upcoming': renderUpcomingPage(); break;
     case 'person':   if (opts.id) renderPersonPage(opts.id); else render404(); break;
     case 'dmca':     renderDmcaPage(); break;
+    case 'privacy':   renderPrivacyPage(); break;
+    case 'terms':     renderTermsPage(); break;
     case 'contact':  renderContactPage(); break;
     case '404':      render404(); break;
     default:         render404();
@@ -1311,7 +1382,7 @@ async function renderHomePage() {
           <li><a href="#" onclick="navigate('contact');return false">İletişim</a></li>
           <li><a href="mailto:destek@neizlesen.com">Yardım</a></li>
           <li><a href="#" onclick="navigate('dmca');return false">DMCA</a></li>
-          <li><a href="#">Gizlilik</a></li>
+          <li><a href="#" onclick="navigate('privacy');return false">Gizlilik</a></li>
         </ul>
       </div>
 
@@ -1320,9 +1391,9 @@ async function renderHomePage() {
         <h4 class="footer-col-title">Yasal</h4>
         <ul class="footer-links">
           <li><a href="#" onclick="navigate('dmca');return false">DMCA Bildirimi</a></li>
-          <li><a href="#">Gizlilik Politikası</a></li>
-          <li><a href="#">Kullanım Şartları</a></li>
-          <li><a href="#">Çerez Politikası</a></li>
+          <li><a href="#" onclick="navigate('privacy');return false">Gizlilik Politikası</a></li>
+          <li><a href="#" onclick="navigate('terms');return false">Kullanım Şartları</a></li>
+          <li><a href="#" onclick="navigate('privacy');return false">Çerez Politikası</a></li>
         </ul>
       </div>
 
@@ -1330,7 +1401,7 @@ async function renderHomePage() {
       <div class="footer-col">
         <h4 class="footer-col-title">Uygulamalar</h4>
         <div class="footer-download-wrap">
-          <a href="/neizlesen-tv.apk" class="footer-dl-btn" download>
+          <div class="footer-dl-btn">
             <div class="footer-dl-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
@@ -1338,15 +1409,15 @@ async function renderHomePage() {
             </div>
             <div class="footer-dl-info">
               <span class="footer-dl-label">Android TV</span>
-              <span class="footer-dl-sub">APK İndir · v1.0</span>
+              <span class="footer-dl-sub">Yakında · Geliştiriliyor</span>
             </div>
-          </a>
-          <p class="footer-dl-note">🔒 Reklamsız · Ücretsiz · TV optimize</p>
+          </div>
+          <p class="footer-dl-note">🚧 Yakında kullanıma sunulacak</p>
         </div>
       </div>
     </footer>
     <div class="footer-bottom">
-      <span>© 2026 Ne İzlesen. Tüm hakları saklıdır.</span>
+      <span>© <span id="footerYear"></span> Ne İzlesen. Tüm hakları saklıdır.</span>
       <span>Türkiye 🇹🇷</span>
     </div>
   `;
@@ -1751,11 +1822,12 @@ async function renderDetailPage(id, mediaType) {
   const el = document.getElementById('page-detail');
   el.innerHTML = '<div class="spinner" style="margin-top:200px"></div>';
   try {
-    const [detail, credits, similar, videos] = await Promise.all([
+    const [detail, credits, similar, videos, extIds] = await Promise.all([
       api(`/${mediaType}/${id}`, { append_to_response: 'keywords' }),
       api(`/${mediaType}/${id}/credits`),
-      api(`/${mediaType}/${id}/similar`, { page: 1 }),
-      api(`/${mediaType}/${id}/videos`)
+      api(`/${mediaType}/${id}/recommendations`, { page: 1 }),
+      api(`/${mediaType}/${id}/videos`),
+      api(`/${mediaType}/${id}/external_ids`)
     ]);
     currentDetail = { id, mediaType, detail };
 
@@ -1912,10 +1984,13 @@ async function renderDetailPage(id, mediaType) {
                 </svg>
                 ${inList ? 'Listede' : 'Listeme Ekle'}
               </button>
-              <a href="https://www.imdb.com/find/?q=${encodeURIComponent(title)}&s=tt&ttype=${mediaType==='tv'?'tv':'ft'}" target="_blank" class="btn-list" style="text-decoration:none;background:rgba(245,197,24,0.12);border-color:rgba(245,197,24,0.35);color:var(--gold)">
+              ${(extIds?.imdb_id) ? `<a href="https://www.imdb.com/title/${extIds.imdb_id}/" target="_blank" class="btn-list" style="text-decoration:none;background:rgba(245,197,24,0.12);border-color:rgba(245,197,24,0.35);color:var(--gold)">
                 <span style="font-weight:800;font-size:12px">IMDb</span>
                 ★ ${rating}
-              </a>
+              </a>` : `<span class="btn-list" style="background:rgba(245,197,24,0.12);border-color:rgba(245,197,24,0.35);color:var(--gold);opacity:.5">
+                <span style="font-weight:800;font-size:12px">IMDb</span>
+                ★ ${rating}
+              </span>`}
             </div>
           </div>
         </div>
@@ -2022,17 +2097,31 @@ window.loadSidebarSeason = async function(seriesId, seasonNum) {
     const data = await api(`/tv/${seriesId}/season/${seasonNum}`);
     const episodes = data.episodes || [];
     if (!episodes.length) { list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px">Bölüm bulunamadı.</div>'; return; }
+    const progress = getVidLinkProgress();
+    const showProg = progress[String(seriesId)] || {};
     list.innerHTML = episodes.map(ep => {
       const thumb = ep.still_path ? `https://image.tmdb.org/t/p/w300${ep.still_path}` : '';
       const runtime = ep.runtime ? `${ep.runtime}dk` : '';
       const rating = ep.vote_average ? `★ ${ep.vote_average.toFixed(1)}` : '';
+      // İzlendi işareti
+      const epKey = `s${seasonNum}e${ep.episode_number}`;
+      const epProg = showProg.show_progress?.[epKey];
+      const watched = epProg?.progress?.watched || 0;
+      const duration = epProg?.progress?.duration || 0;
+      const pct = duration > 0 ? Math.round((watched / duration) * 100) : 0;
+      const isWatched = pct >= 90;
+      const isInProgress = pct >= 5 && pct < 90;
       return `
-        <div class="ps-ep-item" id="ps-ep-${seasonNum}-${ep.episode_number}" onclick="playEpisode(${seriesId},${seasonNum},${ep.episode_number},'${esc(ep.name||'')}')">
-          ${thumb
-            ? `<img class="ps-ep-thumb" src="${thumb}" alt="E${ep.episode_number}" loading="lazy" onerror="this.style.background='var(--card2)';this.removeAttribute('src')">`
-            : `<div class="ps-ep-thumb" style="background:var(--card2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px">▶</div>`}
+        <div class="ps-ep-item ${isWatched ? 'ep-watched' : ''}" id="ps-ep-${seasonNum}-${ep.episode_number}" onclick="playEpisode(${seriesId},${seasonNum},${ep.episode_number},'${esc(ep.name||'')}')">
+          <div class="ps-ep-thumb-wrap" style="position:relative;flex-shrink:0">
+            ${thumb
+              ? `<img class="ps-ep-thumb" src="${thumb}" alt="E${ep.episode_number}" loading="lazy" onerror="this.style.background='var(--card2)';this.removeAttribute('src')">`
+              : `<div class="ps-ep-thumb" style="background:var(--card2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:18px">▶</div>`}
+            ${isWatched ? `<div style="position:absolute;inset:0;background:rgba(0,0,0,.55);border-radius:5px;display:flex;align-items:center;justify-content:center"><span style="color:#4caf50;font-size:18px;font-weight:bold">✓</span></div>` : ''}
+            ${isInProgress ? `<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.15);border-radius:0 0 5px 5px"><div style="height:100%;width:${pct}%;background:var(--accent);border-radius:0 0 5px 5px"></div></div>` : ''}
+          </div>
           <div class="ps-ep-info">
-            <div class="ps-ep-num">B${ep.episode_number}</div>
+            <div class="ps-ep-num" style="${isWatched ? 'color:#4caf50' : ''}">B${ep.episode_number}${isWatched ? ' ✓' : ''}</div>
             <div class="ps-ep-name">${esc(ep.name||'Bölüm '+ep.episode_number)}</div>
             <div class="ps-ep-meta">${[runtime, rating].filter(Boolean).join(' · ')}</div>
           </div>
@@ -2090,27 +2179,38 @@ window.loadSeason = async function(seriesId, seasonNum, tabEl, seasonMeta) {
       return;
     }
 
+    const _prog = getVidLinkProgress();
+    const _showProg = _prog[String(seriesId)] || {};
     epList.innerHTML = episodes.map((ep, i) => {
       const epRating = ep.vote_average ? ep.vote_average.toFixed(1) : null;
       const airDate = ep.air_date ? new Date(ep.air_date).toLocaleDateString('tr-TR', { day:'numeric', month:'long', year:'numeric' }) : '';
       const runtime = ep.runtime ? `${ep.runtime}dk` : '';
       const thumb = ep.still_path ? `https://image.tmdb.org/t/p/w300${ep.still_path}` : '';
+      // İzlendi durumu
+      const _epKey = `s${seasonNum}e${ep.episode_number}`;
+      const _epP = _showProg.show_progress?.[_epKey];
+      const _pct = _epP?.progress?.duration > 0 ? Math.round((_epP.progress.watched / _epP.progress.duration) * 100) : 0;
+      const _isWatched = _pct >= 90;
+      const _isProgress = _pct >= 5 && _pct < 90;
 
       return `
-        <div class="episode-card" style="animation-delay:${i * 0.03}s" onclick="playEpisode(${seriesId},${seasonNum},${ep.episode_number},'${esc(ep.name || '')}')">
-          <div class="ep-num">${String(ep.episode_number).padStart(2,'0')}</div>
-          <div class="ep-thumb-wrap">
+        <div class="episode-card ${_isWatched ? 'ep-watched' : ''}" style="animation-delay:${i * 0.03}s" onclick="playEpisode(${seriesId},${seasonNum},${ep.episode_number},'${esc(ep.name || '')}')">
+          <div class="ep-num" style="${_isWatched ? 'color:#4caf50' : ''}">${String(ep.episode_number).padStart(2,'0')}${_isWatched ? '<br><span style="font-size:14px">✓</span>' : ''}</div>
+          <div class="ep-thumb-wrap" style="position:relative">
             <img class="ep-thumb" src="${thumb}" alt="${esc(ep.name || '')}"
-              onerror="this.style.background='var(--card2)';this.removeAttribute('src')">
-            <div class="ep-play-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)"><polygon points="5,3 19,12 5,21"/></svg>
-            </div>
+              onerror="this.style.background='var(--card2)';this.removeAttribute('src')"
+              style="${_isWatched ? 'opacity:.55' : ''}">
+            ${_isWatched
+              ? `<div style="position:absolute;inset:0;background:rgba(0,0,0,.4);border-radius:8px;display:flex;align-items:center;justify-content:center"><span style="color:#4caf50;font-size:28px">✓</span></div>`
+              : `<div class="ep-play-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="var(--accent)"><polygon points="5,3 19,12 5,21"/></svg></div>`}
+            ${_isProgress ? `<div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.15)"><div style="height:100%;width:${_pct}%;background:var(--accent)"></div></div>` : ''}
           </div>
           <div class="ep-info">
             <div class="ep-title">${esc(ep.name || `${seasonNum}. Sezon ${ep.episode_number}. Bölüm`)}</div>
             <div class="ep-meta">
               ${airDate ? `<span>📅 ${airDate}</span>` : ''}
               ${runtime ? `<span>⏱ ${runtime}</span>` : ''}
+              ${_isWatched ? `<span style="color:#4caf50;font-weight:600">✓ İzlendi</span>` : (_isProgress ? `<span style="color:var(--accent)">${_pct}% izlendi</span>` : '')}
             </div>
             ${ep.overview ? `<div class="ep-overview">${esc(ep.overview)}</div>` : ''}
           </div>
@@ -2805,6 +2905,113 @@ async function renderUpcomingPage() {
   }
 }
 
+
+// ─────────────────────────────────────────────
+// GİZLİLİK POLİTİKASI
+// ─────────────────────────────────────────────
+function renderPrivacyPage() {
+  const el = document.getElementById('page-privacy');
+  el.innerHTML = `
+    <div class="contact-wrap" style="max-width:760px">
+      <div class="contact-title">GİZLİLİK <span style="color:var(--accent)">POLİTİKASI</span></div>
+      <p class="contact-sub">Son güncelleme: Ocak 2026</p>
+
+      <div class="legal-section">
+        <h2>1. Toplanan Veriler</h2>
+        <p>Ne İzlesen, sunucularında herhangi bir kişisel veri toplamamaktadır. Tüm veriler (izleme geçmişi, listeler, tercihler) yalnızca kendi cihazınızın yerel depolama alanında (localStorage) saklanır ve hiçbir sunucuya gönderilmez.</p>
+        <p>Oluşturulan kullanıcı hesapları da yalnızca cihazınızda saklanır. Farklı bir cihazdan erişilemez.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>2. Çerezler ve Yerel Depolama</h2>
+        <p>Sitemiz aşağıdaki verileri tarayıcınızın yerel depolama alanında saklar:</p>
+        <ul>
+          <li><strong>cm_watchlist</strong> — Kaydettiğiniz film ve diziler</li>
+          <li><strong>cm_ratings</strong> — Verdiğiniz puanlar</li>
+          <li><strong>cm_theme</strong> — Aydınlık/karanlık tema tercihi</li>
+          <li><strong>vidLinkProgress</strong> — İzleme ilerlemeniz</li>
+          <li><strong>cm_cookie_consent</strong> — Çerez onayınız</li>
+        </ul>
+        <p>Bu veriler yalnızca sitenin düzgün çalışması için kullanılır, üçüncü taraflarla paylaşılmaz.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>3. Üçüncü Taraf Hizmetler</h2>
+        <p>Sitemiz aşağıdaki üçüncü taraf hizmetleri kullanmaktadır:</p>
+        <ul>
+          <li><strong>TMDB (The Movie Database)</strong> — Film ve dizi bilgileri. <a href="https://www.themoviedb.org/privacy-policy" target="_blank">Gizlilik Politikası</a></li>
+          <li><strong>Google Fonts</strong> — Yazı tipleri. <a href="https://policies.google.com/privacy" target="_blank">Gizlilik Politikası</a></li>
+          <li><strong>Video Kaynakları</strong> — Gömülü video oynatıcılar kendi gizlilik politikalarına tabidir.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>4. KVKK Hakları</h2>
+        <p>6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında, kişisel verileriniz sunucularımızda işlenmediğinden KVKK kapsamında veri sorumluluğumuz bulunmamaktadır. Tüm veriler cihazınızda saklanır ve tarayıcı ayarlarından silinebilir.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>5. İletişim</h2>
+        <p>Gizlilik politikamızla ilgili sorularınız için: <a href="mailto:iletisim@neizlesen.com">iletisim@neizlesen.com</a></p>
+      </div>
+
+      <div style="margin-top:32px">
+        <button class="btn-sm" onclick="navigate('home')">← Ana Sayfaya Dön</button>
+      </div>
+    </div>`;
+}
+
+// ─────────────────────────────────────────────
+// KULLANIM ŞARTLARI
+// ─────────────────────────────────────────────
+function renderTermsPage() {
+  const el = document.getElementById('page-terms');
+  el.innerHTML = `
+    <div class="contact-wrap" style="max-width:760px">
+      <div class="contact-title">KULLANIM <span style="color:var(--accent)">ŞARTLARI</span></div>
+      <p class="contact-sub">Son güncelleme: Ocak 2026</p>
+
+      <div class="legal-section">
+        <h2>1. Hizmet Tanımı</h2>
+        <p>Ne İzlesen, kullanıcılara film ve dizi keşif hizmeti sunan bir rehber platformdur. Platform, video içeriklerini barındırmaz; yalnızca üçüncü taraf kaynaklara yönlendirme yapar.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>2. Kullanım Koşulları</h2>
+        <ul>
+          <li>Platformu yalnızca kişisel, ticari olmayan amaçlarla kullanabilirsiniz.</li>
+          <li>Otomatik erişim araçları (bot, scraper vb.) kullanmak yasaktır.</li>
+          <li>Platformun içeriğini izinsiz kopyalamak, dağıtmak veya ticari amaçla kullanmak yasaktır.</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>3. İçerik Sorumluluğu</h2>
+        <p>Ne İzlesen, üçüncü taraf video kaynaklarında yer alan içeriklerden sorumlu değildir. Platform yalnızca bu kaynaklara bağlantı sağlar. İçerik şikayetleri için ilgili kaynak platformuna başvurunuz.</p>
+        <p>DMCA ihlal bildirimleri için: <a href="#" onclick="navigate('dmca');return false">DMCA Bildirimi</a></p>
+      </div>
+
+      <div class="legal-section">
+        <h2>4. Sorumluluk Reddi</h2>
+        <p>Platform "olduğu gibi" sunulmaktadır. Hizmet kesintileri, içerik erişim sorunları veya üçüncü taraf kaynaklardaki değişiklikler nedeniyle herhangi bir sorumluluk kabul edilmemektedir.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>5. Değişiklikler</h2>
+        <p>Bu şartlar önceden bildirimde bulunmaksızın değiştirilebilir. Güncel sürüm her zaman bu sayfada yayımlanır.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>6. İletişim</h2>
+        <p>Sorularınız için: <a href="mailto:iletisim@neizlesen.com">iletisim@neizlesen.com</a></p>
+      </div>
+
+      <div style="margin-top:32px">
+        <button class="btn-sm" onclick="navigate('home')">← Ana Sayfaya Dön</button>
+      </div>
+    </div>`;
+}
+
 // ─────────────────────────────────────────────
 // DMCA SAYFASI
 // ─────────────────────────────────────────────
@@ -3130,9 +3337,7 @@ function filmCardHtml(m, mediaType) {
   if (mediaType === 'movie' && releaseDate && releaseDate > new Date().toISOString().split('T')[0]) return '';
   const rating = m.vote_average ? m.vote_average.toFixed(1) : '—';
   const imdbUrl = `https://www.imdb.com/find/?q=${encodeURIComponent(title)}&s=tt&ttype=${mediaType==='tv'?'tv':'ft'}`;
-  // Yıla göre dubaj/altyazı tahmini (2020+ genelde var)
-  const hasDub = year >= '2018';
-  const hasSub = true;
+
   return `
     <div class="film-card" onclick="navigate('detail',{id:${m.id},mediaType:'${mediaType}'})">
       <div class="fc-wrap">
@@ -3144,10 +3349,7 @@ function filmCardHtml(m, mediaType) {
         <div class="fc-rating" onclick="event.stopPropagation();window.open('${imdbUrl}','_blank')" title="IMDb'de Gör" style="cursor:pointer">
           <span style="background:var(--gold);color:#000;font-size:8px;font-weight:800;padding:1px 4px;border-radius:2px;letter-spacing:.3px;margin-right:2px">IMDb</span>${rating}
         </div>
-        <div class="fc-dub-badge">
-          ${hasDub ? '<span class="fc-dub">TR DUB</span>' : ''}
-          ${hasSub ? '<span class="fc-sub">ALTYAZI</span>' : ''}
-        </div>
+
         <div class="fc-overlay"><div class="fc-play"><svg width="18" height="18" viewBox="0 0 24 24" fill="#07090e"><polygon points="5,3 19,12 5,21"/></svg></div></div>
       </div>
       <div class="fc-info">
@@ -3190,7 +3392,9 @@ function initSearch() {
   let isMouseDownOnDrop = false;
 
   input.addEventListener('focus', () => {
-    if (document.getElementById('sugList').children.length) drop.style.display = 'block';
+    if (input.value.trim().length >= 2) { drop.style.display = 'block'; return; }
+    showSearchSuggestions();
+    drop.style.display = 'block';
   });
   input.addEventListener('blur', () => {
     if (!isMouseDownOnDrop) drop.style.display = 'none';
@@ -3206,8 +3410,8 @@ function initSearch() {
     clearTimeout(timer);
     const q = e.target.value.trim();
     if (!q || q.length < 2) {
-      document.getElementById('sugList').innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:13px">Aramak için yazın...</div>';
-      drop.style.display = 'none';
+      showSearchSuggestions();
+      drop.style.display = 'block';
       return;
     }
     drop.style.display = 'block';
@@ -3221,6 +3425,7 @@ function initSearch() {
       if (q) {
         drop.style.display = 'none';
         input.blur();
+        saveRecentSearch(q);
         navigate('search', { query: q });
       }
     }
@@ -3237,7 +3442,48 @@ function initHistory() {
   // History tracking happens in detail page when user starts playback
 }
 
+function getRecentSearches() {
+  try { return JSON.parse(localStorage.getItem('cm_recent_searches') || '[]'); } catch { return []; }
+}
+
+function saveRecentSearch(q) {
+  if (!q || q.length < 2) return;
+  let recent = getRecentSearches().filter(s => s.toLowerCase() !== q.toLowerCase());
+  recent.unshift(q);
+  recent = recent.slice(0, 8);
+  localStorage.setItem('cm_recent_searches', JSON.stringify(recent));
+}
+
+function showSearchSuggestions() {
+  const sugList = document.getElementById('sugList');
+  const recent = getRecentSearches();
+  const popular = ['Squid Game', 'Breaking Bad', 'Inception', 'Wednesday', 'The Last of Us', 'Oppenheimer', 'Peaky Blinders', 'Interstellar'];
+
+  let html = '';
+
+  if (recent.length) {
+    html += `<div class="sug-section-label">Son Aramalar
+      <button class="sug-clear-btn" onclick="localStorage.removeItem('cm_recent_searches');showSearchSuggestions()">Temizle</button>
+    </div>`;
+    html += recent.map(s => `
+      <div class="sug-item sug-history" onclick="document.getElementById('searchInput').value='${s}';document.getElementById('searchInput').dispatchEvent(new Event('input'))">
+        <span class="sug-history-icon">🕐</span>
+        <div class="sug-info"><div class="sug-title">${s}</div></div>
+      </div>`).join('');
+  }
+
+  html += `<div class="sug-section-label">Popüler Aramalar</div>`;
+  html += popular.map(s => `
+    <div class="sug-item sug-popular" onclick="document.getElementById('searchInput').value='${s}';document.getElementById('searchInput').dispatchEvent(new Event('input'))">
+      <span class="sug-history-icon">🔥</span>
+      <div class="sug-info"><div class="sug-title">${s}</div></div>
+    </div>`).join('');
+
+  sugList.innerHTML = html;
+}
+
 async function doSearch(q) {
+  saveRecentSearch(q);
   const drop = document.getElementById('searchDrop');
   const sugList = document.getElementById('sugList');
   sugList.innerHTML = '<div style="padding:16px;text-align:center"><div class="spinner" style="width:24px;height:24px;margin:0 auto"></div></div>';
