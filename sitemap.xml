@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Ana Sayfa -->
+  <url>
+    <loc>https://neizlesen.vercel.app/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Filmler -->
+  <url>
+    <loc>https://neizlesen.vercel.app/#movies</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Diziler -->
+  <url>
+    <loc>https://neizlesen.vercel.app/#series</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Yeni Eklenenler -->
+  <url>
+    <loc>https://neizlesen.vercel.app/#new</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Yakında -->
+  <url>
+    <loc>https://neizlesen.vercel.app/#upcoming</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Takvim -->
+  <url>
+    <loc>https://neizlesen.vercel.app/#calendar</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Gizlilik Politikası -->
+  <url>
+    <loc>https://neizlesen.vercel.app/#privacy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Kullanım Şartları -->
+  <url>
+    <loc>https://neizlesen.vercel.app/#terms</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- DMCA -->
+  <url>
+    <loc>https://neizlesen.vercel.app/#dmca</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- İletişim -->
+  <url>
+    <loc>https://neizlesen.vercel.app/#contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+</urlset>
